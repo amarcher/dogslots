@@ -1,5 +1,9 @@
 source 'https://rubygems.org'
 
+# Compile assets for heroku
+group :production do
+  gem 'rails_12factor'
+end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.8'

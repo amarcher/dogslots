@@ -5,6 +5,11 @@
 $endone: 2160px;
 $endtwo: 1728px;
 
+.win_count {
+  text-align: center;
+  margin: 0px auto;
+}
+
 button.spin {
 	display: block;
 	margin: 10px auto;
@@ -19,27 +24,33 @@ button.spin {
 	background-image: url(image-path('SLOT_DOGS_lineup.jpg'));
 	width: 432px;
 	height: 300px;
-	&:nth-child(1) {
-    background-position : $endone 0px;
-    animation-name: slide_one;
-    animation-duration: 5s;
-    -webkit-animation-name: slide_one;
-    -webkit-animation-duration: 5s;
-  }
-	&:nth-child(2) {
-    background-position : $endtwo -300px;
-    animation-name: slide_two;
-    animation-duration: 7s;
-    -webkit-animation-name: slide_two;
-    -webkit-animation-duration: 7s;
-  }
-	&:nth-child(3) {
-    background-position : 864px -400px;
-    animation-name: slide_three;
-    animation-duration: 9s;
-    -webkit-animation-name: slide_three;
-    -webkit-animation-duration: 9s;
-  }
+}
+
+#slot1 {
+  background-position : $endone 0px;
+  animation-name: slide_one;
+  animation-duration: 5s;
+  -webkit-animation-name: slide_one;
+  -webkit-animation-duration: 5s;
+}
+
+#slot2 {
+  background-position : $endtwo -300px;
+  animation-name: slide_two;
+  animation-duration: 7s;
+  -webkit-animation-name: slide_two;
+  -webkit-animation-duration: 7s;
+}
+
+#slot3 {
+  background-position : 864px -400px;
+  animation-name: slide_three;
+  animation-duration: 9s;
+  -webkit-animation-name: slide_three;
+  -webkit-animation-duration: 9s;
+}
+
+.slot {
   /* Chrome, Safari, Opera */
   -webkit-animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
   -webkit-animation-delay: 0.05s;

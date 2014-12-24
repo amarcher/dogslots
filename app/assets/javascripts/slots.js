@@ -2,27 +2,46 @@ $(document).ready(function() {
 	NumberOfImages = 10;
 	ImageWidth = 432;
 
-	function Slot(els) {
+	function Slot(els, winEl) {
 		this.reels = els;
 		this.positions = [0,0];
+		this.winTallyArea = winEl;
+		this.winCount = 0;
 	}
 
 	Slot.prototype = {
 
 		start: function(finalPos) {
+			var _this = this;
 			$.each( this.reels, function( index, value ){
 				$(value).animate(
 					{
 						backgroundPositionX: 3*finalPos[index]*ImageWidth + 'px'
 					},
 					3800,
-					"easeOutQuint"
+					"easeOutQuint",
+					function() {
+						if ( index == _this.reels.length - 1 ) // last reel stopped spinning
+							_this.stop(finalPos);
+					}
 				);
 			});
 		},
 
-		stop: function() {
+		stop: function(finalPos) {
+			if (finalPos) {
+				this.positions = finalPos;
+			} else {
+				// find final position
+			}
+			if (this.positions[0] == this.positions[1]) {
+				this.winner();
+			}
+	 	},
 
+	 	winner: function() {
+	 		this.winCount += 1;
+	 		this.winTallyArea.text(this.winCount);
 	 	},
 
 	 	finalPos: function() {
@@ -34,7 +53,7 @@ $(document).ready(function() {
  	  }
 	};
 
-	var slot = new Slot( $('.slot') );
+	var slot = new Slot( $('.slot'), $('.wins') );
 
 	/**
 	* Slot machine controller

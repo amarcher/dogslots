@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 # Compile assets for heroku
 group :production do
+  gem 'rails_serve_static_assets'
+  gem 'rails_stdout_logging'
   gem 'rails_12factor'
 end
 

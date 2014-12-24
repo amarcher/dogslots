@@ -1,0 +1,82 @@
+// Place all the styles related to the welcome controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$endone: 2160px;
+$endtwo: 1728px;
+
+button.spin {
+	display: block;
+	margin: 10px auto;
+	width: 100px;
+	height: 50px;
+	font-weight: bold;
+	font-size: 2em;
+}
+
+.slot {
+	margin: 0px auto;
+	background-image: url('SLOT_DOGS_lineup.jpg');
+	width: 432px;
+	height: 300px;
+	&:nth-child(1) {
+    background-position : $endone 0px;
+    animation-name: slide_one;
+    animation-duration: 5s;
+    -webkit-animation-name: slide_one;
+    -webkit-animation-duration: 5s;
+  }
+	&:nth-child(2) {
+    background-position : $endtwo -300px;
+    animation-name: slide_two;
+    animation-duration: 7s;
+    -webkit-animation-name: slide_two;
+    -webkit-animation-duration: 7s;
+  }
+	&:nth-child(3) {
+    background-position : 864px -400px;
+    animation-name: slide_three;
+    animation-duration: 9s;
+    -webkit-animation-name: slide_three;
+    -webkit-animation-duration: 9s;
+  }
+  /* Chrome, Safari, Opera */
+  -webkit-animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
+  -webkit-animation-delay: 0.05s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-direction: normal;
+  -webkit-animation-play-state: paused;
+  /* Standard syntax */
+  animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
+  animation-delay: 0.05s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-play-state: paused;
+}
+
+@-webkit-keyframes slide_one {
+    from{
+        background-position: -9000px 0px;
+    }
+    to{
+        background-position: $endone 0px;
+    }
+}
+
+@-webkit-keyframes slide_two {
+    from{
+        background-position: -11000px -300px;
+    }
+    to{
+        background-position: $endtwo -300px;
+    }
+}
+
+@-webkit-keyframes slide_three {
+    from{
+        background-position: -13000px -400px;
+    }
+    to{
+        background-position: 864px -400px;
+    }
+}

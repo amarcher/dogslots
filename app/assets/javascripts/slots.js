@@ -1,6 +1,17 @@
 $(document).ready(function() {
-	NumberOfImages = 10;
+	NumberOfImages = 9;
 	ImageWidth = 432;
+
+	ion.sound({
+	    sounds: [
+	        {
+	            name: "door_bell"
+	        }
+	    ],
+	    volume: 1,
+	    path: "sounds/",
+	    preload: true
+	});
 
 	function Slot(els, winEl) {
 		this.reels = els;
@@ -16,7 +27,7 @@ $(document).ready(function() {
 			$.each( this.reels, function( index, value ){
 				$(value).animate(
 					{
-						backgroundPositionX: 3*finalPos[index]*ImageWidth + 'px'
+						backgroundPositionX: 10*finalPos[index]*ImageWidth + 'px'
 					},
 					3800,
 					"easeOutQuint",
@@ -42,6 +53,10 @@ $(document).ready(function() {
 	 	winner: function() {
 	 		this.winCount += 1;
 	 		this.winTallyArea.text(this.winCount);
+ 			ion.sound.play("door_bell");
+ 			setTimeout(function() {
+ 				ion.sound.play("door_bell");
+ 			}, 500);
 	 	},
 
 	 	finalPos: function() {

@@ -15,5 +15,7 @@
 //= require ../../../vendor/assets/javascripts/jquery-ui
 //= require ../../../vendor/assets/javascripts/jquery-bg-position
 //= require ../../../vendor/assets/javascripts/spritely
+//= require ../../../vendor/assets/javascripts/ion.sound
+//= require ../../../vendor/assets/javascripts/jquery.ion.sound
 //= require turbolinks
 //= require_tree .

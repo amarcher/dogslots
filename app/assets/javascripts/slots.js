@@ -2,6 +2,32 @@ NumberOfImages = 9;
 ImageWidth = 432;
 StartBones = 10;
 
+function Bone(boneId) {
+	this.el = null;
+	this.boneId = boneId;
+	this.context = { bone_id: this.boneId };
+	this.html    = bone_template(this.context);
+	this.boneBank = $('.bone_drop'); // TODO: move after doc loads
+}
+
+Bone.prototype = {
+
+	add: function() {
+		this.boneBank.append( this.html );
+		this.el = $('#bone_' + this.boneId);
+		this.el.css({ 'top': '-70vh' }).animate({ 
+		        top: "+=100vh",
+		      }, 500 );
+	},
+
+	remove: function() {
+		this.el.animate({ 
+		        top: "+=100vh",
+		      }, 500 );
+	}
+
+};
+
 FirstNames = 	[null,
 							'Aussie',
 							'Boston',
@@ -39,7 +65,9 @@ function Slot(els, winEl, boneEl, controlEl, nameEl) {
 	this.positions = [0,0];
 	this.winTallyArea = winEl;
 	this.winCount = 0;
-	this.bones = StartBones;
+	this.bones = [];
+	this.nextBoneId = 0;
+	this.boneTally = 0;
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
 	this.firstName = $('.dogname .first');
@@ -51,7 +79,11 @@ Slot.prototype = {
 
 	setUpGame: function() {
 		var _this = this;
-		this.boneTallyArea.text(this.bones);
+		// add start bones
+		for ( var i=0; i<StartBones; i++ ) {
+			_this.addBone();
+		}
+		// set up click controller
 		this.control.click( function() {
 		  _this.start(_this.finalPos());
 		});
@@ -61,9 +93,8 @@ Slot.prototype = {
 	start: function(finalPos) {
 		var _this = this;
 		
-		// decrement bones
-		this.bones -= 1;
-		this.boneTallyArea.text(this.bones);
+		// decrement boneTally
+		this.removeBone();
 
 		// disable button
 		this.disableControls();
@@ -98,7 +129,7 @@ Slot.prototype = {
 		if (this.positions[0] === this.positions[1]) {
 			this.winner();
 			this.enableControls();
-		} else if (this.bones === 0) {
+		} else if (this.boneTally === 0) {
 			this.gameOver();
 		} else {
 			this.enableControls();
@@ -111,8 +142,7 @@ Slot.prototype = {
  		
  		var payout = this.payout();
  		for (var i=0; i<payout; i++) {
-	 		this.bones += 1;
-	 		this.boneTallyArea.text( this.bones );
+ 			this.addBone();
 	 	}
 
 		ion.sound.play("door_bell");
@@ -157,9 +187,30 @@ Slot.prototype = {
 
   enableControls: function() {
   	this.control.prop("disabled", false);
+  },
+
+  addBone: function() {
+  	var bone = new Bone( this.nextBoneId );
+		this.bones.push( bone );
+ 		this.boneTally++;
+  	this.nextBoneId++;
+  	bone.add();
+ 		this.boneTallyArea.text( this.boneTally );
+  },
+
+  removeBone: function() {
+  	var bone = this.bones.pop();
+  	bone.remove();
+  	this.boneTally--;
+  	this.boneTallyArea.text( this.boneTally );
   }
 };
 
 $(document).ready(function() {
+	// precompile templates
+	var bone_source   = $("#bone-template").html();
+	// global variable
+	bone_template = Handlebars.compile(bone_source);
+
 	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control') );
 });

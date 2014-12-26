@@ -5,6 +5,21 @@
 $endone: 2160px;
 $endtwo: 1728px;
 
+.zone {
+  float: left;
+  height: 100vh;
+  margin: 0px 50px;
+}
+
+.bone_drop {
+  width: 200px;
+}
+
+.bone {
+  position: relative;
+  top: 50vh;
+}
+
 .win_count, .bone_count, .dogname {
   text-align: center;
   margin: 0px auto;

@@ -23,7 +23,7 @@ Bone.prototype = {
 	remove: function() {
 		this.el.animate({ 
 		        top: "+=100vh",
-		      }, 500 );
+		      }, 500 ).delay( 550 ).remove();
 	}
 
 };
@@ -106,7 +106,7 @@ Slot.prototype = {
 		$.each( this.reels, function( index, value ){
 			$(value).animate(
 				{
-					backgroundPosition: -5*finalPos[index]*ImageWidth + 'px ' + 300*index + 'px'
+					backgroundPosition: -6*finalPos[index]*ImageWidth + 'px ' + 300*index + 'px'
 				},
 				2800,
 				"easeOutQuint",

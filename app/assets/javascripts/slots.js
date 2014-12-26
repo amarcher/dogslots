@@ -23,7 +23,7 @@ Bone.prototype = {
 	remove: function() {
 		this.el.animate({ 
 		        top: "+=100vh",
-		      }, 500 ).delay( 550 ).remove();
+		      }, 500 ).hide(1000);
 	}
 
 };

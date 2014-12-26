@@ -13,7 +13,7 @@ function Bone(boneId) {
 Bone.prototype = {
 
 	add: function() {
-		this.boneBank.append( this.html );
+		this.boneBank.prepend( this.html );
 		this.el = $('#bone_' + this.boneId);
 		this.el.css({ 'top': '-70vh' }).animate({ 
 		        top: "+=100vh",
@@ -106,9 +106,9 @@ Slot.prototype = {
 		$.each( this.reels, function( index, value ){
 			$(value).animate(
 				{
-					backgroundPositionX: -10*finalPos[index]*ImageWidth + 'px'
+					backgroundPosition: -5*finalPos[index]*ImageWidth + 'px ' + 300*index + 'px'
 				},
-				3800,
+				2800,
 				"easeOutQuint",
 				function() {
 					if ( index == _this.reels.length - 1 ) // last reel stopped spinning
@@ -191,7 +191,7 @@ Slot.prototype = {
 
   addBone: function() {
   	var bone = new Bone( this.nextBoneId );
-		this.bones.push( bone );
+		this.bones.unshift( bone );
  		this.boneTally++;
   	this.nextBoneId++;
   	bone.add();

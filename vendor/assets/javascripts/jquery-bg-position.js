@@ -1,67 +1,68 @@
-/**
- * @author Alexander Farkas
- * v. 1.22
- */
+/* http://keith-wood.name/backgroundPos.html
+   Background position animation for jQuery v1.1.1.
+   Written by Keith Wood (kbwood{at}iinet.com.au) November 2010.
+   Available under the MIT (https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt) license. 
+   Please attribute the author if you use it. */
 
+(function($) { // Hide scope, no $ conflict
 
-(function($) {
-	if(!document.defaultView || !document.defaultView.getComputedStyle){ // IE6-IE8
-		var oldCurCSS = $.curCSS;
-		$.curCSS = function(elem, name, force){
-			if(name === 'background-position'){
-				name = 'backgroundPosition';
-			}
-			if(name !== 'backgroundPosition' || !elem.currentStyle || elem.currentStyle[ name ]){
-				return oldCurCSS.apply(this, arguments);
-			}
-			var style = elem.style;
-			if ( !force && style && style[ name ] ){
-				return style[ name ];
-			}
-			return oldCurCSS(elem, 'backgroundPositionX', force) +' '+ oldCurCSS(elem, 'backgroundPositionY', force);
-		};
-	}
-	
-	var oldAnim = $.fn.animate;
-	$.fn.animate = function(prop){
-		if('background-position' in prop){
-			prop.backgroundPosition = prop['background-position'];
-			delete prop['background-position'];
-		}
-		if('backgroundPosition' in prop){
-			prop.backgroundPosition = '('+ prop.backgroundPosition;
-		}
-		return oldAnim.apply(this, arguments);
+var usesTween = !!$.Tween;
+
+if (usesTween) { // jQuery 1.8+
+	$.Tween.propHooks['backgroundPosition'] = {
+		get: function(tween) {
+			return parseBackgroundPosition($(tween.elem).css(tween.prop));
+		},
+		set: setBackgroundPosition
 	};
-	
-	function toArray(strg){
-		strg = strg.replace(/left|top/g,'0px');
-		strg = strg.replace(/right|bottom/g,'100%');
-		strg = strg.replace(/([0-9\.]+)(\s|\)|$)/g,"$1px$2");
-		var res = strg.match(/(-?[0-9\.]+)(px|\%|em|pt)\s(-?[0-9\.]+)(px|\%|em|pt)/);
-		return [parseFloat(res[1],10),res[2],parseFloat(res[3],10),res[4]];
-	}
-	
-	$.fx.step. backgroundPosition = function(fx) {
-		if (!fx.bgPosReady) {
-			var start = $.curCSS(fx.elem,'backgroundPosition');
-			if(!start){//FF2 no inline-style fallback
-				start = '0px 0px';
-			}
-			
-			start = toArray(start);
-			fx.start = [start[0],start[2]];
-			var end = toArray(fx.end);
-			fx.end = [end[0],end[2]];
-			
-			fx.unit = [end[1],end[3]];
-			fx.bgPosReady = true;
-		}
-		//return;
-		var nowPosX = [];
-		nowPosX[0] = ((fx.end[0] - fx.start[0]) * fx.pos) + fx.start[0] + fx.unit[0];
-		nowPosX[1] = ((fx.end[1] - fx.start[1]) * fx.pos) + fx.start[1] + fx.unit[1];           
-		fx.elem.style.backgroundPosition = nowPosX[0]+' '+nowPosX[1];
+}
+else { // jQuery 1.7-
+	// Enable animation for the background-position attribute
+	$.fx.step['backgroundPosition'] = setBackgroundPosition;
+};
 
+/* Parse a background-position definition: horizontal [vertical]
+   @param  value  (string) the definition
+   @return  ([2][string, number, string]) the extracted values - relative marker, amount, units */
+function parseBackgroundPosition(value) {
+	var bgPos = (value || '').split(/ /);
+	var presets = {center: '50%', left: '0%', right: '100%', top: '0%', bottom: '100%'};
+	var decodePos = function(index) {
+		var pos = (presets[bgPos[index]] || bgPos[index] || '50%').
+			match(/^([+-]=)?([+-]?\d+(\.\d*)?)(.*)$/);
+		bgPos[index] = [pos[1], parseFloat(pos[2]), pos[4] || 'px'];
 	};
+	if (bgPos.length == 1 && $.inArray(bgPos[0], ['top', 'bottom']) > -1) {
+		bgPos[1] = bgPos[0];
+		bgPos[0] = '50%';
+	}
+	decodePos(0);
+	decodePos(1);
+	return bgPos;
+}
+
+/* Set the value for a step in the animation.
+   @param  tween  (object) the animation properties */
+function setBackgroundPosition(tween) {
+	if (!tween.set) {
+		initBackgroundPosition(tween);
+	}
+	$(tween.elem).css('background-position',
+		((tween.pos * (tween.end[0][1] - tween.start[0][1]) + tween.start[0][1]) + tween.end[0][2]) + ' ' +
+		((tween.pos * (tween.end[1][1] - tween.start[1][1]) + tween.start[1][1]) + tween.end[1][2]));
+}
+
+/* Initialise the animation.
+   @param  tween  (object) the animation properties */
+function initBackgroundPosition(tween) {
+	tween.start = parseBackgroundPosition($(tween.elem).css('backgroundPosition'));
+	tween.end = parseBackgroundPosition(tween.end);
+	for (var i = 0; i < tween.end.length; i++) {
+		if (tween.end[i][0]) { // Relative position
+			tween.end[i][1] = tween.start[i][1] + (tween.end[i][0] == '-=' ? -1 : +1) * tween.end[i][1];
+		}
+	}
+	tween.set = true;
+}
+
 })(jQuery);

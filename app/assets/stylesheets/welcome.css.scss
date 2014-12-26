@@ -2,8 +2,8 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-$endone: 2160px;
-$endtwo: 1728px;
+$endone: 0px;
+$endtwo: 0px;
 
 .zone {
   float: left;
@@ -16,7 +16,7 @@ $endtwo: 1728px;
 }
 
 .bone {
-  width: 50px;
+  width: 66px;
   position: relative;
   float: left;
 }
@@ -38,47 +38,40 @@ button.spin {
 .slot {
 	margin: 0px auto;
 	background-image: url(image-path('SLOT_DOGS_lineup_2.jpg'));
+  background-repeat: repeat-x;
 	width: 432px;
 	height: 300px;
 }
 
 #slot1 {
   background-position : $endone 0px;
-  animation-name: slide_one;
-  animation-duration: 5s;
-  -webkit-animation-name: slide_one;
-  -webkit-animation-duration: 5s;
+  // animation-name: slide_one;
+  // animation-duration: 5s;
+  // -webkit-animation-name: slide_one;
+  // -webkit-animation-duration: 5s;
 }
 
 #slot2 {
   background-position : $endtwo -300px;
-  animation-name: slide_two;
-  animation-duration: 7s;
-  -webkit-animation-name: slide_two;
-  -webkit-animation-duration: 7s;
-}
-
-#slot3 {
-  background-position : 864px -400px;
-  animation-name: slide_three;
-  animation-duration: 9s;
-  -webkit-animation-name: slide_three;
-  -webkit-animation-duration: 9s;
+  // animation-name: slide_two;
+  // animation-duration: 7s;
+  // -webkit-animation-name: slide_two;
+  // -webkit-animation-duration: 7s;
 }
 
 .slot {
   /* Chrome, Safari, Opera */
-  -webkit-animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
-  -webkit-animation-delay: 0.05s;
-  -webkit-animation-iteration-count: 1;
-  -webkit-animation-direction: normal;
-  -webkit-animation-play-state: paused;
+  // -webkit-animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
+  // -webkit-animation-delay: 0.05s;
+  // -webkit-animation-iteration-count: 1;
+  // -webkit-animation-direction: normal;
+  // -webkit-animation-play-state: paused;
   /* Standard syntax */
-  animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
-  animation-delay: 0.05s;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-  animation-play-state: paused;
+  // animation-timing-function: ease, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // cubic-bezier(0,.24,1,1);
+  // animation-delay: 0.05s;
+  // animation-iteration-count: 1;
+  // animation-direction: normal;
+  // animation-play-state: paused;
 }
 
 @-webkit-keyframes slide_one {
@@ -96,14 +89,5 @@ button.spin {
     }
     to{
         background-position: $endtwo -300px;
-    }
-}
-
-@-webkit-keyframes slide_three {
-    from{
-        background-position: -13000px -400px;
-    }
-    to{
-        background-position: 864px -400px;
     }
 }

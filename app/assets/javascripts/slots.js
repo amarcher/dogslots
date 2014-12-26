@@ -106,9 +106,9 @@ Slot.prototype = {
 		$.each( this.reels, function( index, value ){
 			$(value).animate(
 				{
-					backgroundPosition: -6*finalPos[index]*ImageWidth + 'px ' + 300*index + 'px'
+					backgroundPosition: -10*finalPos[index]*ImageWidth + 'px ' + -300*index + 'px'
 				},
-				2800,
+				3200,
 				"easeOutQuint",
 				function() {
 					if ( index == _this.reels.length - 1 ) // last reel stopped spinning
@@ -177,7 +177,7 @@ Slot.prototype = {
   },
 
   gameOver: function() {
-  	alert('Woof, you\'re out of bones! You got ' + this.winCount + ' toys');
+  	alert('Woof, you\'re out of bones! You got ' + this.winCount + ' toys.');
   	this.disableControls();
   },
 

@@ -64,26 +64,34 @@ ion.sound({
 function NameWheel(el) {
 	this.carousel = el;
 	this.panelCount = el.children().length;
-	this.theta = 0;
-	this.position = 0;
+	this.activeEl = $(el.children()[0]);
+	this.pos = this.activeEl.index();
+	this.theta = this.pos * ( 360 / this.panelCount );
+	this.activeEl.addClass('result');
 }
 
 NameWheel.prototype = {
 
-  spin: function( newPosition ){
-    var increment = newPosition - this.position;
-    this.position = newPosition;
+  spin: function( newPos ){
+  	this.activeEl.toggleClass('result');
+  	var destination = '[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]';
+  	var destEl = $(this.carousel.find(destination));
+  	var destIndex = destEl.index();
+    var increment = destIndex - this.pos;
+    this.pos = destIndex;
     this.theta += ( 360 / this.panelCount ) * increment * -1;
     this.carousel.css(
     	{ transform: 'rotateX(' + this.theta + 'deg)' }
   	);
+  	this.activeEl = destEl;
+  	this.activeEl.toggleClass('result');
   }
 };
 
-function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEls) {
+function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
 	this.reels = els;
 	this.positions = [0,0];
-	this.nameWheels = [ new NameWheel( $(nameWheelEls[0]) ) ];
+	this.nameWheel = new NameWheel( $(nameWheelEl) );
 	this.winTallyArea = winEl;
 	this.winCount = 0;
 	this.bones = [];
@@ -123,11 +131,11 @@ Slot.prototype = {
 		// clear dog name
 		this.clearDogName();
 
+		// spin nameWheel
+		this.nameWheel.spin(finalPos);
+
 		// spin reels
 		$.each( this.reels, function( index, value ){
-			if (index === 0) {
-				_this.nameWheels[0].spin(finalPos[index]);
-			}
 			$(value).animate(
 				{
 					backgroundPosition: -10*finalPos[index]*ImageWidth + 'px ' + -300*index + 'px'

@@ -9,16 +9,13 @@
 <div class='bone_drop zone'>
 </div>
 <div class='name_carousel zone'>
+	<div class="needle">
 	<div class="carousel">
-		<figure>Yellow</figure>
-		<figure>Aussie</figure>
-		<figure>Boston</figure>
-		<figure>Boy</figure>
-		<figure>Chi</figure>
-		<figure>Chocolate</figure>
-		<figure>Cocker</figure>
-		<figure>Poo</figure>
-		<figure>Portuguese</figure>
+		<% @dogs.shuffle.each do |dog| %> 
+			<figure class='<%= "match" if dog.match %>' data-posone='<%= dog.posone %>' data-postwo='<%= dog.postwo %>'>
+				<%= dog.name %>
+			</figure>
+		<% end %>
 	</div>
 </div>
 

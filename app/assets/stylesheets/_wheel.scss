@@ -1,0 +1,22 @@
+$panelCount: 9;
+$panelSize: 136;
+
+@function theta() {
+	@return 360 / $panelCount;
+}
+
+@function radius() {
+	@return ( $panelSize / 2 ) / tan( pi() / $panelCount );
+}
+
+@function angle($panel) {
+	@return theta() * $panel;
+}
+
+@function deg($measure) {
+	@return unquote($measure + 'deg');
+}
+
+@function px($measure) {
+	@return unquote($measure + 'px');
+}

@@ -1,9 +1,18 @@
 // Place all the styles related to the welcome controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import "trig";
+@import "wheel"; // Requires trig
 
-$endone: 0px;
-$endtwo: 0px;
+$endone: 0;
+$endtwo: 0;
+
+@mixin transform($value) {
+  -webkit-transform: $value;
+     -moz-transform: $value;
+      -ms-transform: $value;
+          transform: $value;
+}
 
 .zone {
   float: left;
@@ -22,12 +31,11 @@ $endtwo: 0px;
 }
 
 .carousel {
+  @include transform(translateZ(-0px) rotateX(-0deg));
   width: 100%;
   height: 116px;
   position: absolute;
   top: 30vh;
-  transform: translateZ(-0px) rotateX(-0deg);
-  -webkit-transform: translateZ(-0px) rotateX(-0deg);
   transform-origin: center;
   -webkit-transform-origin: center;
   transform-style: preserve-3d;
@@ -38,33 +46,18 @@ $endtwo: 0px;
     display: block;
     position: absolute;
     width: 178px;
-    height: 116px;
+    height: 136px;
     left: 10px;
-    top: 10px;
+    top: 0px;
     border: 2px solid black;
     background-color: red;
     margin: 0px;
     text-align: center;
-    line-height: 116px;
+    line-height: 136px;
   }
-  figure:nth-child(1) { transform:          rotateX(   0deg ) translateZ( 192px ); 
-                        -webkit-transform:  rotateX(   0deg ) translateZ( 192px ); }
-  figure:nth-child(2) { transform:          rotateX(  40deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX(  40deg ) translateZ( 192px ); }
-  figure:nth-child(3) { transform:          rotateX(  80deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX(  80deg ) translateZ( 192px ); }
-  figure:nth-child(4) { transform:          rotateX( 120deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 120deg ) translateZ( 192px ); }
-  figure:nth-child(5) { transform:          rotateX( 160deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 160deg ) translateZ( 192px ); }
-  figure:nth-child(6) { transform:          rotateX( 200deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 200deg ) translateZ( 192px ); }
-  figure:nth-child(7) { transform:          rotateX( 240deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 240deg ) translateZ( 192px ); }
-  figure:nth-child(8) { transform:          rotateX( 280deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 280deg ) translateZ( 192px ); }
-  figure:nth-child(9) { transform:          rotateX( 320deg ) translateZ( 192px );
-                        -webkit-transform:  rotateX( 320deg ) translateZ( 192px ); }
+  @for $i from 0 through $panelCount {
+    figure:nth-child( #{$i} ) { @include transform(rotateX(deg(angle( $i - 1 ))) translateZ(px(radius()))); }
+  }
 }
 
 .bone {

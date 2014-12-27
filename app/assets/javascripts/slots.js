@@ -16,15 +16,15 @@ Bone.prototype = {
 		this.boneBank.prepend( this.html );
 		this.el = $('#bone_' + this.boneId);
 		this.el.css({ 'top': '-70vh' }).animate({ 
-		        top: "+=100vh",
-		        rotateZ: "+=1080"
-		      }, 500 );
+      top: "+=100vh",
+      rotateZ: "+=1080"
+    }, 500 );
 	},
 
 	remove: function() {
 		this.el.animate({ 
-		        top: "+=100vh",
-		      }, 500 ).hide(1000);
+      top: "+=100vh",
+    }, 500 ).hide(1000);
 	}
 
 };

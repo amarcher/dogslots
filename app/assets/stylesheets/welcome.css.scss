@@ -11,8 +11,60 @@ $endtwo: 0px;
   margin: 0px 50px;
 }
 
-.bone_drop {
-  width: 200px;
+.bone_drop, .name_carousel {
+  width: 210px;
+  -webkit-perspective: 1000px;
+  -moz-perspective: 1000px;
+}
+
+.name_carousel {
+  position: relative;
+}
+
+.carousel {
+  width: 100%;
+  height: 116px;
+  position: absolute;
+  top: 30vh;
+  transform: translateZ(-0px) rotateX(-0deg);
+  -webkit-transform: translateZ(-0px) rotateX(-0deg);
+  transform-origin: center;
+  -webkit-transform-origin: center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 3.2s;
+  -webkit-transition: -webkit-transform 3.2s;
+  figure {
+    display: block;
+    position: absolute;
+    width: 178px;
+    height: 116px;
+    left: 10px;
+    top: 10px;
+    border: 2px solid black;
+    background-color: red;
+    margin: 0px;
+    text-align: center;
+    line-height: 116px;
+  }
+  figure:nth-child(1) { transform:          rotateX(   0deg ) translateZ( 192px ); 
+                        -webkit-transform:  rotateX(   0deg ) translateZ( 192px ); }
+  figure:nth-child(2) { transform:          rotateX(  40deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX(  40deg ) translateZ( 192px ); }
+  figure:nth-child(3) { transform:          rotateX(  80deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX(  80deg ) translateZ( 192px ); }
+  figure:nth-child(4) { transform:          rotateX( 120deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 120deg ) translateZ( 192px ); }
+  figure:nth-child(5) { transform:          rotateX( 160deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 160deg ) translateZ( 192px ); }
+  figure:nth-child(6) { transform:          rotateX( 200deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 200deg ) translateZ( 192px ); }
+  figure:nth-child(7) { transform:          rotateX( 240deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 240deg ) translateZ( 192px ); }
+  figure:nth-child(8) { transform:          rotateX( 280deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 280deg ) translateZ( 192px ); }
+  figure:nth-child(9) { transform:          rotateX( 320deg ) translateZ( 192px );
+                        -webkit-transform:  rotateX( 320deg ) translateZ( 192px ); }
 }
 
 .bone {

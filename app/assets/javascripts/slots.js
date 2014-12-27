@@ -17,6 +17,7 @@ Bone.prototype = {
 		this.el = $('#bone_' + this.boneId);
 		this.el.css({ 'top': '-70vh' }).animate({ 
 		        top: "+=100vh",
+		        rotateZ: "+=1080"
 		      }, 500 );
 	},
 
@@ -60,9 +61,29 @@ ion.sound({
   preload: true
 });
 
-function Slot(els, winEl, boneEl, controlEl, nameEl) {
+function NameWheel(el) {
+	this.carousel = el;
+	this.panelCount = el.children().length;
+	this.theta = 0;
+	this.position = 0;
+}
+
+NameWheel.prototype = {
+
+  spin: function( newPosition ){
+    var increment = newPosition - this.position;
+    this.position = newPosition;
+    this.theta += ( 360 / this.panelCount ) * increment * -1;
+    this.carousel.css(
+    	{ transform: 'rotateX(' + this.theta + 'deg)' }
+  	);
+  }
+};
+
+function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEls) {
 	this.reels = els;
 	this.positions = [0,0];
+	this.nameWheels = [ new NameWheel( $(nameWheelEls[0]) ) ];
 	this.winTallyArea = winEl;
 	this.winCount = 0;
 	this.bones = [];
@@ -70,8 +91,8 @@ function Slot(els, winEl, boneEl, controlEl, nameEl) {
 	this.boneTally = 0;
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
-	this.firstName = $('.dogname .first');
-	this.lastName = $('.dogname .last');
+	this.firstName = $(nameEls[0]);
+	this.lastName = $(nameEls[1]);
 	this.setUpGame();
 }
 
@@ -104,6 +125,9 @@ Slot.prototype = {
 
 		// spin reels
 		$.each( this.reels, function( index, value ){
+			if (index === 0) {
+				_this.nameWheels[0].spin(finalPos[index]);
+			}
 			$(value).animate(
 				{
 					backgroundPosition: -10*finalPos[index]*ImageWidth + 'px ' + -300*index + 'px'
@@ -212,5 +236,5 @@ $(document).ready(function() {
 	// global variable
 	bone_template = Handlebars.compile(bone_source);
 
-	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control') );
+	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname span'), $('.carousel') );
 });

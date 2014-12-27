@@ -28,6 +28,23 @@ $endtwo: 0;
 
 .name_carousel {
   position: relative;
+  .needle {
+    @include transform(translateY(px(2.5)) translateZ(px(1.3 * radius())));
+    position: absolute;
+    top: 40vh;
+    z-index: 9999;
+  }
+  .needle:after {
+    content: "";
+    position: absolute;
+    display: block;
+    height: #{ $panelSize }px;
+    width: 206px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.33) 0%,rgba(255,255,255,0.33) 60%,rgba(255,255,255,0) 61%,rgba(255,255,255,0) 100%);
+    border: 4px solid black;
+    border-radius: 20%;
+    -webkit-border-radius: 20%;
+  }
 }
 
 .carousel {
@@ -42,6 +59,7 @@ $endtwo: 0;
   -webkit-transform-style: preserve-3d;
   transition: transform 3.2s;
   -webkit-transition: -webkit-transform 3.2s;
+  -webkit-backface-visibility: hidden;
   figure {
     display: block;
     position: absolute;
@@ -50,13 +68,15 @@ $endtwo: 0;
     left: 10px;
     top: 0px;
     border: 1px solid black;
-    background-color: red;
+    border-left-width: 5px;
+    border-right-width: 5px;
+    background-color: gray;
     margin: 0px;
     text-align: center;
     line-height: #{$panelSize}px;
   }
   .match {
-    background-color: green;
+    background-color: rgb(135, 151, 9);
   }
   @for $i from 0 through $panelCount {
     figure:nth-child( #{$i} ) { @include transform(rotateX(deg(angle( $i - 1 ))) translateZ(px(radius()))); }

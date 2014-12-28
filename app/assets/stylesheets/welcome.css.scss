@@ -14,16 +14,45 @@ $endtwo: 0;
           transform: $value;
 }
 
+
+.hide {
+  display: none;
+}
+
 .zone {
   float: left;
   height: 100vh;
-  margin: 0px 50px;
+  margin: 0px 0px 0px;
+}
+
+.slot_machine {
+  background-image: url(image-path('boutique_window.png'));
+  width: 705px;
+  height: 1026px;
+  position: relative;
+  top: -320px;
+  overflow: visible;
+  .display, .controls {
+    position: relative;
+    top: 380px;
+  }
 }
 
 .bone_drop, .name_carousel {
-  width: 210px;
+  width: 300px;
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
+}
+
+.bone_drop {
+  .bowl {
+    position: relative;
+    top: 40vh;
+    height: 200px;
+    z-index: 100;
+    background-image: url(image-path('dog_bowl_image.png'));
+    background-repeat: no-repeat;
+  }
 }
 
 .name_carousel {

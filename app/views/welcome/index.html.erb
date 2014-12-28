@@ -1,12 +1,18 @@
 <div class='slot_machine zone'>
-	<div class='slot' id='slot1'></div>
-	<div class='slot' id='slot2'></div>
-	<H1 class='bone_count'>Bones: <span class='bones'>10</span></H1>
-	<H1 class='win_count'>Toys: <span class='wins'>0</span></H1>
-	<button type='button' id='control' class='spin'>Spin!</button>
-	<H1 class='dogname'><span class='first'></span><span class='last'></span></H1>
+	<div class='display'>
+		<div class='slot' id='slot1'></div>
+		<div class='slot' id='slot2'></div>
+	</div>
+	<div class='controls'>
+		<H1 class='win_count'>Toys: <span class='wins'>0</span></H1>
+		<button type='button' id='control' class='spin'>Spin!</button>
+		<H1 class='dogname hide'><span class='first'></span><span class='last'></span></H1>
+	</div>
 </div>
 <div class='bone_drop zone'>
+	<div class='bowl'>
+		<H1 class='bone_count hide'>Bones: <span class='bones'>10</span></H1>
+	</div>
 </div>
 <div class='name_carousel zone'>
 	<div class="needle"></div>

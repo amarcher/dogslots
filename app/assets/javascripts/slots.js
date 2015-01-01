@@ -1,6 +1,6 @@
 NumberOfImages = 9;
 ImageWidth = 432;
-StartBones = 1;
+StartBones = 5;
 
 function Bone(boneId) {
 	this.el = null;

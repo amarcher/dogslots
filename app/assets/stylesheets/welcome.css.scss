@@ -14,16 +14,72 @@ $endtwo: 0;
           transform: $value;
 }
 
+
+.hide {
+  display: none;
+}
+
+body {
+  margin: 0px;
+}
+
+#overlay {
+  width: 100%;
+  height: 100vh;
+  background-color: black;
+  opacity: .3;
+  z-index: 999;
+}
+
+#modal {
+  position: absolute;
+  height: 600px;
+  top: 50px;
+  width: 80%;
+  left: 10%;
+  border-radius: 15px;
+  z-index: 1000;
+  background-color: gray;
+  border: 5px solid black;
+  h1, h2 {
+    text-align: center;
+  }
+}
+
 .zone {
   float: left;
   height: 100vh;
-  margin: 0px 50px;
+  margin: 0px 0px 0px;
+}
+
+.slot_machine {
+  background-image: url(image-path('boutique_window.png'));
+  width: 705px;
+  height: 1026px;
+  position: relative;
+  top: -320px;
+  overflow: visible;
+  .display, .controls {
+    position: relative;
+    top: 380px;
+  }
 }
 
 .bone_drop, .name_carousel {
-  width: 210px;
+  width: 300px;
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
+}
+
+.bone_drop {
+  .bowl {
+    position: relative;
+    top: 40vh;
+    height: 200px;
+    z-index: 100;
+    background-image: url(image-path('dog_bowl_image.png'));
+    background-repeat: no-repeat;
+  }
 }
 
 .name_carousel {
@@ -94,10 +150,10 @@ $endtwo: 0;
   margin: 0px auto;
 }
 
-button.spin {
+button {
 	display: block;
 	margin: 10px auto;
-	width: 100px;
+	min-width: 100px;
 	height: 50px;
 	font-weight: bold;
 	font-size: 2em;

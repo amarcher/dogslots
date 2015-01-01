@@ -190,7 +190,7 @@ Slot.prototype = {
   },
 
   payout: function() {
-  	return 1;
+  	return 5;
   },
 
   setDogName: function() {

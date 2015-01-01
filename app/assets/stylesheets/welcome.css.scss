@@ -19,6 +19,33 @@ $endtwo: 0;
   display: none;
 }
 
+body {
+  margin: 0px;
+}
+
+#overlay {
+  width: 100%;
+  height: 100vh;
+  background-color: black;
+  opacity: .3;
+  z-index: 999;
+}
+
+#modal {
+  position: absolute;
+  height: 600px;
+  top: 50px;
+  width: 80%;
+  left: 10%;
+  border-radius: 15px;
+  z-index: 1000;
+  background-color: gray;
+  border: 5px solid black;
+  h1, h2 {
+    text-align: center;
+  }
+}
+
 .zone {
   float: left;
   height: 100vh;
@@ -123,10 +150,10 @@ $endtwo: 0;
   margin: 0px auto;
 }
 
-button.spin {
+button {
 	display: block;
 	margin: 10px auto;
-	width: 100px;
+	min-width: 100px;
 	height: 50px;
 	font-weight: bold;
 	font-size: 2em;

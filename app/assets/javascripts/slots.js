@@ -1,6 +1,6 @@
 NumberOfImages = 9;
 ImageWidth = 432;
-StartBones = 10;
+StartBones = 1;
 
 function Bone(boneId) {
 	this.el = null;
@@ -109,9 +109,7 @@ Slot.prototype = {
 	setUpGame: function() {
 		var _this = this;
 		// add start bones
-		for ( var i=0; i<StartBones; i++ ) {
-			_this.addBone();
-		}
+		this.addBones(StartBones);
 		// set up click controller
 		this.control.click( function() {
 		  _this.start(_this.finalPos());
@@ -192,7 +190,7 @@ Slot.prototype = {
   },
 
   payout: function() {
-  	return 10;
+  	return 1;
   },
 
   setDogName: function() {
@@ -208,9 +206,33 @@ Slot.prototype = {
   	this.lastName.text('');
   },
 
+  restart: function() {
+  	// remove all bones
+  	console.log('restarting');
+
+  	for ( var i=0; i<this.bones.length; i++ ) {
+  		this.removeBone();
+  	}
+
+  	this.addBones(StartBones);
+  	this.winCount = 0;
+  	this.winTallyArea.text(this.winCount);
+  	this.enableControls();
+  },
+
   gameOver: function() {
-  	alert('Woof, you\'re out of bones! You got ' + this.winCount + ' toys.');
-  	this.disableControls();
+  	var _this = this;
+	  var html = modal_template({toys: this.winCount});
+	  $('body').append(html);
+	  $('#start_over').on('click',function(){
+	  	_this.restart();
+	  	$('#overlay, #modal').remove();
+	  });
+	  $('#get_more_bones').on('click',function(){ 
+	  	_this.addBones(StartBones);
+	  	_this.enableControls();
+	  	$('#overlay, #modal').remove();
+	  });
   },
 
   disableControls: function() {
@@ -230,6 +252,12 @@ Slot.prototype = {
  		this.boneTallyArea.text( this.boneTally );
   },
 
+  addBones: function(bones) {
+  	for ( var i=0; i<bones; i++ ) {
+  		this.addBone();
+  	}
+  },
+
   removeBone: function() {
   	var bone = this.bones.pop();
   	bone.remove();
@@ -241,8 +269,11 @@ Slot.prototype = {
 $(document).ready(function() {
 	// precompile templates
 	var bone_source   = $("#bone-template").html();
+	var modal_source   = $("#modal-template").html();
+
 	// global variable
 	bone_template = Handlebars.compile(bone_source);
+	modal_template = Handlebars.compile(modal_source);
 
 	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname span'), $('.carousel') );
 });

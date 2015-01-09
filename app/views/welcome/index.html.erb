@@ -11,15 +11,15 @@
 </div>
 <div class='bone_drop zone'>
 	<div class='bowl hide'>
-		<H1 class='bone_count hide'>Bones: <span class='bones'>10</span></H1>
+		<H1 class='bone_count hide impact'>Bones: <span class='bones'>10</span></H1>
 	</div>
 </div>
 <div class='name_carousel zone'>
 	<div class="needle"></div>
-	<div class="carousel">
+	<div class="carousel tracking impact">
 		<% @dogs.shuffle.each do |dog| %> 
-			<figure class='<%= "match" if dog.match %>' data-posone='<%= dog.posone %>' data-postwo='<%= dog.postwo %>'>
-				<%= dog.name %>
+			<figure class='<%= "match" if dog.match %><%= " wild" if (dog.posone == 13 || dog.postwo == 13) %>' data-posone='<%= dog.posone %>' data-postwo='<%= dog.postwo %>'>
+				<%= dog.name.upcase %>
 			</figure>
 		<% end %>
 	</div>

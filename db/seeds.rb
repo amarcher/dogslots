@@ -11,11 +11,11 @@ require 'csv'
 file_name = 'db/Compound Dogs - Compound.csv'
 
 CSV.foreach(file_name) do |row|
-	row_num = $.
-	next if row_num < 2
+  row_num = $.
+  next if row_num < 2
   row.each_with_index do |col, index|
-  	next if index < 1
-  	match = (row_num == index + 1) 
-  	Dog.create(name: col, match: match, posone: (row_num - 1), postwo: index) unless index == 0
+    next if index < 1
+    match = (row_num == index + 1) 
+    Dog.create(name: col, match: match, posone: (row_num - 1), postwo: index) unless index == 0
   end
 end

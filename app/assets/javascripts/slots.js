@@ -1,6 +1,7 @@
-NumberOfImages = 9;
+NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
+Rotations = 10;
 
 function Bone(boneId) {
 	this.el = null;
@@ -38,7 +39,11 @@ FirstNames = 	[null,
 							'Cocker',
 							'Poo',
 							'Portuguese',
-							'Yellow'];
+							'Yellow',
+							'Peking',
+							'Bull',
+							'Welsh',
+							'Wild'];
 LastNames = 	[null,
 							'-shephard',
 							'-terrier',
@@ -48,13 +53,19 @@ LastNames = 	[null,
 							'-spaniel',
 							'-dle',
 							'-waterdog',
-							'-lab'];
+							'-lab',
+							'-ese',
+							'-dog',
+							'-corgi',
+							'-wolf'];
 
 ion.sound({
   sounds: [
-    {
-      name: "door_bell"
-    }
+    {name: "dog bark"},
+    {name: "register"},
+    {name: "success"},
+    {name: "coin in slot"},
+    {name: "game start"}
   ],
   volume: 1,
   path: "sounds/",
@@ -79,7 +90,7 @@ NameWheel.prototype = {
   	var destIndex = destEl.index();
     var increment = destIndex - this.pos;
     this.pos = destIndex;
-    this.theta += ( 360 / this.panelCount ) * increment * -1;
+    this.theta += -360 + ( 360 / this.panelCount ) * increment * -1;
     this.carousel.css(
     	{ transform: 'rotateX(' + this.theta + 'deg)' }
   	);
@@ -102,6 +113,7 @@ function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
 	this.firstName = $(nameEls[0]);
 	this.lastName = $(nameEls[1]);
 	this.setUpGame();
+	this.goLeft = true;
 }
 
 Slot.prototype = {
@@ -118,8 +130,11 @@ Slot.prototype = {
 	},
 
 	start: function(finalPos) {
-		var _this = this;
+		var _this = this, bgX, bgY, rotation;
 		
+		// play sound
+		this.playSound('coin in slot');
+
 		// decrement boneTally
 		this.removeBone();
 
@@ -132,11 +147,17 @@ Slot.prototype = {
 		// spin nameWheel
 		this.nameWheel.spin(finalPos);
 
+		// determine rotation
+		rotation = -this.goLeft * Rotations * NumberOfImages * ImageWidth;
+		this.goLeft = -this.goLeft;
+
 		// spin reels
 		$.each( this.reels, function( index, value ){
+			bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
+			bgY = -300*index;
 			$(value).animate(
 				{
-					backgroundPosition: -10*finalPos[index]*ImageWidth + 'px ' + -300*index + 'px'
+					backgroundPosition: bgX + 'px ' + bgY + 'px'
 				},
 				3200,
 				"easeOutQuint",
@@ -156,8 +177,8 @@ Slot.prototype = {
 		} else {
 			// find final position
 		}
-		if (this.positions[0] === this.positions[1]) {
-			this.winner();
+		if (this.winner()) {
+			this.win();
 			this.enableControls();
 		} else if (this.boneTally === 0) {
 			this.gameOver();
@@ -167,6 +188,14 @@ Slot.prototype = {
  	},
 
  	winner: function() {
+ 		if (this.positions[0] === 13 || this.positions[1] === 13) {
+ 			return true;
+ 		} else {
+ 			return this.positions[0] === this.positions[1];
+ 		}
+ 	},
+
+ 	win: function() {
  		this.winCount += 1;
  		this.winTallyArea.text( this.winCount );
  		
@@ -175,26 +204,31 @@ Slot.prototype = {
  			this.addBone();
 	 	}
 
-		ion.sound.play("door_bell");
-		setTimeout(function() {
-			ion.sound.play("door_bell");
-		}, 500);
+	 	this.playSound('success');
  	},
 
  	finalPos: function() {
  		var newPostions = [];
  		for ( var i=0, len=this.reels.length; i < len; i++ ) {
- 			newPostions.push( Math.floor( ( Math.random() * NumberOfImages ) + 1 ) );
-	    }
+ 			newPostions.push( Math.floor( ( Math.random() * NumberOfImages ) ) + 1 );
+    }
 	  return newPostions;
   },
 
   payout: function() {
-  	return 5;
+  	// double wolf is a mega win 
+  	if (this.positions[0] === this.positions[1] === 13) {
+  		return 25;
+  	} else {
+	  	return 5;
+	  }
+  },
+
+  playSound: function(name) {
+  	ion.sound.play(name);
   },
 
   setDogName: function() {
-  	console.log( this.positions );
   	var first = FirstNames[ this.positions[0] ];
   	var last = LastNames[ this.positions[1] ];
   	this.firstName.text( first );
@@ -226,11 +260,13 @@ Slot.prototype = {
 	  $('body').append(html);
 	  $('#start_over').on('click',function(){
 	  	_this.restart();
+	  	_this.playSound('game start');
 	  	$('#overlay, #modal').remove();
 	  });
 	  $('#get_more_bones').on('click',function(){ 
 	  	_this.addBones(StartBones);
 	  	_this.enableControls();
+	  	_this.playSound('register');
 	  	$('#overlay, #modal').remove();
 	  });
   },

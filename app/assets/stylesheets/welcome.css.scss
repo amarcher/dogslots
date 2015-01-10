@@ -38,6 +38,12 @@ $endtwo: 0;
   letter-spacing: 2px;
 }
 
+.text_title {
+  background-image: url(image-path('Lucky_Dog_Logo.png'));
+  background-repeat: repeat;
+  width: 160px;
+}
+
 body {
   margin: 0px;
   background-image: url(image-path('DOT_TILE_PATTERN-01.gif'));
@@ -74,16 +80,20 @@ body {
 }
 
 .slot_machine {
-  background-image: url(image-path('boutique_window.png'));
   width: 705px;
   height: 1026px;
   position: relative;
-  top: -320px;
-  overflow: visible;
   .display, .controls {
     position: relative;
-    top: 380px;
   }
+}
+
+.dotted-border {
+  border-width: 20px;
+  border-style:dotted;
+  -webkit-border-image: url(image-path('border.png')) 40 40 round; /* Safari 3.1-5 */
+  -o-border-image: url(image-path('border.png')) 40 40 round; /* Opera 11-12.1 */
+  border-image: url(image-path('border.png')) 40 40 round;
 }
 
 .bone_drop, .name_carousel {
@@ -178,10 +188,11 @@ body {
 button {
 	display: block;
 	margin: 10px auto;
-	min-width: 100px;
-	height: 50px;
+	width: 100px;
+	height: 100px;
 	font-weight: bold;
 	font-size: 2em;
+  border-radius: 50px;
 }
 
 .slot {
@@ -190,6 +201,14 @@ button {
   background-repeat: repeat-x;
 	width: 432px;
 	height: 300px;
+  &:nth-child(1) {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  &:nth-child(2) {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
 }
 
 #slot1 {
@@ -223,20 +242,20 @@ button {
   // animation-play-state: paused;
 }
 
-@-webkit-keyframes slide_one {
-    from{
-        background-position: -9000px 0px;
-    }
-    to{
-        background-position: $endone 0px;
-    }
-}
+// @-webkit-keyframes slide_one {
+//     from{
+//         background-position: -9000px 0px;
+//     }
+//     to{
+//         background-position: $endone 0px;
+//     }
+// }
 
-@-webkit-keyframes slide_two {
-    from{
-        background-position: -11000px -300px;
-    }
-    to{
-        background-position: $endtwo -300px;
-    }
-}
+// @-webkit-keyframes slide_two {
+//     from{
+//         background-position: -11000px -300px;
+//     }
+//     to{
+//         background-position: $endtwo -300px;
+//     }
+// }

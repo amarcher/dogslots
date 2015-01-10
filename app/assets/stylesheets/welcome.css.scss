@@ -80,12 +80,19 @@ body {
 }
 
 .slot_machine {
-  width: 705px;
+  width: 505px;
   height: 1026px;
   position: relative;
   .display, .controls {
+    padding: 20px;
     position: relative;
   }
+  top: 20px;
+}
+
+.controls {
+  position: relative;
+  float: left;
 }
 
 .dotted-border {
@@ -185,7 +192,7 @@ body {
   margin: 0px auto;
 }
 
-button {
+button.circle {
 	display: block;
 	margin: 10px auto;
 	width: 100px;
@@ -193,7 +200,24 @@ button {
 	font-weight: bold;
 	font-size: 2em;
   border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  -o-border-radius: 50px;
 }
+
+button.oval {
+  display: block;
+  margin: 10px auto;
+  width: 100px;
+  height: 100px;
+  font-weight: bold;
+  font-size: 2em;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
 
 .slot {
 	margin: 0px auto;

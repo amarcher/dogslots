@@ -123,6 +123,7 @@ body {
 
 .name_carousel {
   position: relative;
+  top: 50px;
   .needle {
     @include transform(translateY(px(7)) translateZ(px(1.3 * radius())));
     position: absolute;
@@ -189,7 +190,14 @@ body {
 
 .win_count, .bone_count, .dogname {
   text-align: center;
-  margin: 0px auto;
+  margin: 10px auto 0px;
+  background-color: rgb(255, 211, 226);
+  width: 100%;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -o-border-radius: 10px;
+  height: 40px;
 }
 
 button.circle {
@@ -208,7 +216,7 @@ button.circle {
 button.oval {
   display: block;
   margin: 10px auto;
-  width: 100px;
+  width: 150px;
   height: 100px;
   font-weight: bold;
   font-size: 2em;

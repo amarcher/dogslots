@@ -231,8 +231,8 @@ Slot.prototype = {
   setDogName: function() {
   	var first = FirstNames[ this.positions[0] ];
   	var last = LastNames[ this.positions[1] ];
-  	this.firstName.text( first );
-  	this.lastName.text( last );
+  	this.firstName.text( first.toUpperCase() );
+  	this.lastName.text( last.toUpperCase() );
   },
 
   clearDogName: function() {

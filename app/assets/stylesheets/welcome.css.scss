@@ -83,14 +83,13 @@ body {
 }
 
 .slot_machine {
-  width: 505px;
+  width: 520px;
   height: 1026px;
   position: relative;
   .display, .controls {
     padding: 20px;
     position: relative;
   }
-  top: 20px;
 }
 
 .controls {
@@ -194,7 +193,7 @@ body {
 
 .win_count, .bone_count, .dogname {
   text-align: center;
-  margin: 10px auto 0px;
+  margin: 20px auto 0px;
   background-color: rgb(255, 211, 226);
   width: 100%;
   border-radius: 10px;

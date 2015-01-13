@@ -31,16 +31,19 @@ $endtwo: 0;
 
 .impact {
   font-family: "Impact";
-  font-size: .7em;
 }
 
 .tracking {
   letter-spacing: 2px;
 }
 
+.big {
+  font-size: 2.2em;
+}
+
 .text_title {
   background-image: url(image-path('Lucky_Dog_Logo.png'));
-  background-repeat: repeat;
+  background-repeat: no-repeat;
   width: 160px;
 }
 
@@ -170,6 +173,7 @@ body {
     margin: 0px;
     text-align: center;
     line-height: #{$panelSize}px;
+    font-size: .7em;
   }
   .match {
     background-color: rgb(135, 151, 9);
@@ -197,7 +201,8 @@ body {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -o-border-radius: 10px;
-  height: 40px;
+  height: 60px;
+  line-height: 60px;
 }
 
 button.circle {

@@ -72,37 +72,27 @@ ion.sound({
   preload: true
 });
 
-function NameWheel(el) {
-	this.carousel = el;
-	this.panelCount = el.children().length;
-	this.activeEl = $(el.children()[0]);
-	this.pos = this.activeEl.index();
-	this.theta = this.pos * ( 360 / this.panelCount );
-	this.activeEl.addClass('result');
+function NameArea( node ) {
+	this.names = node.children();
+	this.activeEl = null;
 }
 
-NameWheel.prototype = {
+NameArea.prototype = {
+  display: function( newPos ) {
+  	this.activeEl = $('[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]');
+  	this.activeEl.toggleClass('hide');
+  },
 
-  spin: function( newPos ){
-  	this.activeEl.toggleClass('result');
-  	var destination = '[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]';
-  	var destEl = $(this.carousel.find(destination));
-  	var destIndex = destEl.index();
-    var increment = destIndex - this.pos;
-    this.pos = destIndex;
-    this.theta += -360 + ( 360 / this.panelCount ) * increment * -1;
-    this.carousel.css(
-    	{ transform: 'rotateX(' + this.theta + 'deg)' }
-  	);
-  	this.activeEl = destEl;
-  	this.activeEl.toggleClass('result');
+  clearOut: function() {
+  	if (this.activeEl) {
+  		this.activeEl.toggleClass('hide');
+  	}
   }
 };
 
-function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
+function Slot(els, winEl, boneEl, controlEl, nameEl ) {
 	this.reels = els;
 	this.positions = [0,0];
-	this.nameWheel = new NameWheel( $(nameWheelEl) );
 	this.winTallyArea = winEl;
 	this.winCount = 0;
 	this.bones = [];
@@ -110,8 +100,7 @@ function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
 	this.boneTally = 0;
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
-	this.firstName = $(nameEls[0]);
-	this.lastName = $(nameEls[1]);
+	this.nameArea = new NameArea( nameEl );
 	this.setUpGame();
 	this.goLeft = true;
 }
@@ -143,9 +132,6 @@ Slot.prototype = {
 
 		// clear dog name
 		this.clearDogName();
-
-		// spin nameWheel
-		this.nameWheel.spin(finalPos);
 
 		// determine rotation
 		rotation = -this.goLeft * Rotations * NumberOfImages * ImageWidth;
@@ -229,15 +215,11 @@ Slot.prototype = {
   },
 
   setDogName: function() {
-  	var first = FirstNames[ this.positions[0] ];
-  	var last = LastNames[ this.positions[1] ];
-  	this.firstName.text( first.toUpperCase() );
-  	this.lastName.text( last.toUpperCase() );
+  	this.nameArea.display( this.positions );
   },
 
   clearDogName: function() {
-  	this.firstName.text('');
-  	this.lastName.text('');
+  	this.nameArea.clearOut();
   },
 
   restart: function() {
@@ -256,7 +238,7 @@ Slot.prototype = {
 
   gameOver: function() {
   	var _this = this;
-	  var html = modal_template({toys: this.winCount});
+	  var html = modal_template({toys: this.winCount, plural: this.winCount === 1 ? "" : "s" });
 	  $('body').append(html);
 	  $('#start_over').on('click',function(){
 	  	_this.restart();
@@ -311,5 +293,5 @@ $(document).ready(function() {
 	bone_template = Handlebars.compile(bone_source);
 	modal_template = Handlebars.compile(modal_source);
 
-	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname span'), $('.carousel') );
+	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname') );
 });

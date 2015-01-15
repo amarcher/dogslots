@@ -6,6 +6,7 @@ $panelSize: 14;
 }
 
 @function radius() {
+	@debug pi() / $panelCount;
 	@return ( $panelSize / 2 ) / tan( pi() / $panelCount );
 }
 

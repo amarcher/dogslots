@@ -30,35 +30,6 @@ Bone.prototype = {
 
 };
 
-FirstNames = 	[null,
-							'Aussie',
-							'Boston',
-							'Boy',
-							'Chi',
-							'Chocolate',
-							'Cocker',
-							'Poo',
-							'Portuguese',
-							'Yellow',
-							'Peking',
-							'Bull',
-							'Welsh',
-							'Wild'];
-LastNames = 	[null,
-							'-shephard',
-							'-terrier',
-							'-kin',
-							'-huahua',
-							'-labrador',
-							'-spaniel',
-							'-dle',
-							'-waterdog',
-							'-lab',
-							'-ese',
-							'-dog',
-							'-corgi',
-							'-wolf'];
-
 ion.sound({
   sounds: [
     {name: "dog bark"},

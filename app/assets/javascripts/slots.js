@@ -1,7 +1,25 @@
+// Consta
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
 Rotations = 10;
+InitialSpinDuration = 400;
+MidSpinDuration = 5000;
+EndSpinDuration = 5000;
+SpinDuration = 3200;
+
+ion.sound({
+  sounds: [
+    {name: "dog bark"},
+    {name: "register"},
+    {name: "success"},
+    {name: "coin in slot"},
+    {name: "game start"}
+  ],
+  volume: 1,
+  path: "sounds/",
+  preload: true
+});
 
 function Bone(boneId) {
 	this.el = null;
@@ -27,21 +45,7 @@ Bone.prototype = {
       top: "+=100vh",
     }, 500 ).hide(1000);
 	}
-
 };
-
-ion.sound({
-  sounds: [
-    {name: "dog bark"},
-    {name: "register"},
-    {name: "success"},
-    {name: "coin in slot"},
-    {name: "game start"}
-  ],
-  volume: 1,
-  path: "sounds/",
-  preload: true
-});
 
 function NameArea( node ) {
 	this.names = node.children();
@@ -59,6 +63,72 @@ NameArea.prototype = {
   		this.activeEl.toggleClass('hide');
   	}
   }
+};
+
+function Reel(el) {
+	this.el = el;
+	this._bg = null;
+	this._pos = null;
+	this.updatePositions(); // TBD can you call this here?
+}
+
+Reel.prototype = {
+
+	bg: function() {
+		var coords = this.el.css(backgroundPosition).split(" ");
+		for (var i=0; i<coords.length; i++){
+			coords[i] = parseFloat(coords[i]);
+		}
+		return coords;
+	},
+
+	pos: function() {
+		return Math.round(this._bg / ImageWidth) % NumberOfImages;
+	},
+
+	updatePositions: function() {
+		this._bg = this.bg();
+		this._pos = this.pos();
+	},
+
+	initialSpin: function() {
+		this.el.animate(
+			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			InitialSpinDuration,
+			"easeIn",
+			this.midSpin // advance to midspin
+		);
+	},
+
+	midSpin: function() {
+		this.el.on("click", endSpin);
+		this.el.animate(
+			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			MidSpinDuration,
+			"linear",
+			function() {
+				_this.stopReel( value );
+				if ( index === _this.reels.length - 1 ) // last reel stopped spinning
+					_this.stop(finalPos);
+			}
+		);
+	},
+
+	endSpin: function() {
+		this.el.off("click");
+		this.el.stop();
+		this.updatePositions();
+		this.el.animate(
+			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			EndSpinDuration,
+			"easeOutQuint",
+			function() {
+				_this.stopReel( value );
+				if ( index === _this.reels.length - 1 ) // last reel stopped spinning
+					_this.stop(finalPos);
+			}
+		);
+	}
 };
 
 function Slot(els, winEl, boneEl, controlEl, nameEl ) {
@@ -91,20 +161,18 @@ Slot.prototype = {
 
 	start: function(finalPos) {
 		var _this = this, bgX, bgY, rotation;
-		
-		// play sound
 		this.playSound('coin in slot');
-
-		// decrement boneTally
 		this.removeBone();
-
-		// disable button
 		this.disableControls();
-
-		// clear dog name
 		this.clearDogName();
 
-		// determine rotation
+		// begin the spin
+
+		// continue the spin
+
+		// if unstopped stop the spin
+
+		// determine rotation and change direction
 		rotation = -this.goLeft * Rotations * NumberOfImages * ImageWidth;
 		this.goLeft = -this.goLeft;
 
@@ -112,14 +180,18 @@ Slot.prototype = {
 		$.each( this.reels, function( index, value ){
 			bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
 			bgY = -300*index;
+
+			console.log(value);
+
 			$(value).animate(
 				{
 					backgroundPosition: bgX + 'px ' + bgY + 'px'
 				},
-				3200,
-				"easeOutQuint",
+				SpinDuration,
+				"linear",
 				function() {
-					if ( index == _this.reels.length - 1 ) // last reel stopped spinning
+					_this.stopReel( value );
+					if ( index === _this.reels.length - 1 ) // last reel stopped spinning
 						_this.stop(finalPos);
 				}
 			);
@@ -128,12 +200,14 @@ Slot.prototype = {
 
 	stop: function(finalPos) {
 
-		if (finalPos) {
-			this.positions = finalPos;
-			this.setDogName();
-		} else {
-			// find final position
-		}
+		if (! finalPos) {
+
+		} 
+
+		this.positions = finalPos;
+		console.log(finalPos);
+		this.setDogName();
+
 		if (this.winner()) {
 			this.win();
 			this.enableControls();
@@ -148,13 +222,15 @@ Slot.prototype = {
  		if (this.positions[0] === 13 || this.positions[1] === 13) {
  			return true;
  		} else {
- 			return this.positions[0] === this.positions[1];
+ 			return this.trueMatch();
  		}
  	},
 
  	win: function() {
- 		this.winCount += 1;
- 		this.winTallyArea.text( this.winCount );
+ 		if ( this.trueMatch() ) {
+	 		this.winCount += 1;
+	 		this.winTallyArea.text( this.winCount );
+	 	}
  		
  		var payout = this.payout();
  		for (var i=0; i<payout; i++) {
@@ -162,6 +238,10 @@ Slot.prototype = {
 	 	}
 
 	 	this.playSound('success');
+ 	},
+
+ 	trueMatch: function() {
+ 		return this.positions[0] === this.positions[1];
  	},
 
  	finalPos: function() {
@@ -225,11 +305,37 @@ Slot.prototype = {
   },
 
   disableControls: function() {
+  	var _this = this;
   	this.control.prop("disabled", true);
+  	this.reels.on("click", function(event) {
+  		_this.stopReel(event.target);
+  	});
   },
 
   enableControls: function() {
+  	this.reels.off("click");
   	this.control.prop("disabled", false);
+  },
+
+  stopReel: function( reel ) {
+  	var bg = $(reel).css("backgroundPosition").split(" ");
+  	var bgX = parseFloat( bg[0] );
+  	var pos = Math.round( bgX / ImageWidth ) % 13;
+  	console.log(pos);
+
+  	$(reel).off("click");
+  	$(reel).stop(); // .animate(
+			// 	{
+			// 		backgroundPosition: bgX + 'px ' + bgY + 'px'
+			// 	},
+			// 	3200,
+			// 	"easeOutQuint",
+			// 	function() {
+			// 		if ( index == _this.reels.length - 1 ) // last reel stopped spinning
+			// 			_this.stop(finalPos);
+			// 	}
+			// );
+  	// console.log(finalPos[0] % NumberOfImages);
   },
 
   addBone: function() {

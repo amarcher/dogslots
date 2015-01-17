@@ -1,11 +1,11 @@
-// Consta
+// Constants
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
 Rotations = 10;
 InitialSpinDuration = 400;
 MidSpinDuration = 5000;
-EndSpinDuration = 5000;
+EndSpinDuration = 1000;
 SpinDuration = 3200;
 
 ion.sound({
@@ -69,21 +69,24 @@ function Reel(el) {
 	this.el = el;
 	this._bg = null;
 	this._pos = null;
+	this.goLeft = true;
 	this.updatePositions(); // TBD can you call this here?
 }
 
 Reel.prototype = {
 
 	bg: function() {
-		var coords = this.el.css(backgroundPosition).split(" ");
+		var coords = this.el.css("backgroundPosition").split(" ");
 		for (var i=0; i<coords.length; i++){
 			coords[i] = parseFloat(coords[i]);
 		}
+		console.log('bg', coords);
 		return coords;
 	},
 
 	pos: function() {
-		return Math.round(this._bg / ImageWidth) % NumberOfImages;
+		console.log(Math.round(this._bg[0] / ImageWidth) % NumberOfImages);
+		return Math.round(this._bg[0] / ImageWidth) % NumberOfImages;
 	},
 
 	updatePositions: function() {
@@ -92,47 +95,83 @@ Reel.prototype = {
 	},
 
 	initialSpin: function() {
+		// Rotate one full time around
+		var that = this;
+		var bgX = -this.goLeft * NumberOfImages * ImageWidth - this._bg[0];
+
 		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
 			InitialSpinDuration,
-			"easeIn",
-			this.midSpin // advance to midspin
+			"swing",
+			this.midSpin.bind(that)
 		);
+		console.log('here');
 	},
 
 	midSpin: function() {
-		this.el.on("click", endSpin);
+		var bgX, that = this;
+		
+		// Update positions and attach event handlers
+		this.updatePositions();
+		this.el.on("mousedown", function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			that.el.stop(); // stop midspin animation
+			that.endSpin();
+		});
+
+		bgX = -this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0];
+
+		console.log(bgX);
+
 		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
 			MidSpinDuration,
 			"linear",
-			function() {
-				_this.stopReel( value );
-				if ( index === _this.reels.length - 1 ) // last reel stopped spinning
-					_this.stop(finalPos);
-			}
+			that.endSpin.bind(that)
 		);
 	},
 
 	endSpin: function() {
-		this.el.off("click");
-		this.el.stop();
+		var bgX, that = this;
+		
+		// Update position and remove event handlers
 		this.updatePositions();
+		this.el.off("mousedown");
+
+		// Change spin direction for next go
+		this.goLeft = -this.goLeft;
+		
+		// Calculate end spin position
+		bgX = this._bg[0];
+		bgX -= this.remainingRotation();
+		bgX -= (-this.goLeft * ImageWidth); // add one more rotation
+
+		console.log(bgX);
+
+		// Advance reel to end spin position
 		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + bgY + 'px' },
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
 			EndSpinDuration,
 			"easeOutQuint",
 			function() {
-				_this.stopReel( value );
-				if ( index === _this.reels.length - 1 ) // last reel stopped spinning
-					_this.stop(finalPos);
+				that.updatePositions();
+				console.log("pos", that._pos);
 			}
 		);
-	}
+	},
+
+	finalPos: function() {
+ 		return Math.floor( ( Math.random() * NumberOfImages ) ) + 1;
+  },
+
+  remainingRotation: function() {
+  	return this._bg[0] % ImageWidth;
+  }
 };
 
 function Slot(els, winEl, boneEl, controlEl, nameEl ) {
-	this.reels = els;
+	this.reels = [ new Reel( $(els[0]) ), new Reel( $(els[1]) ) ];
 	this.positions = [0,0];
 	this.winTallyArea = winEl;
 	this.winCount = 0;
@@ -177,25 +216,10 @@ Slot.prototype = {
 		this.goLeft = -this.goLeft;
 
 		// spin reels
-		$.each( this.reels, function( index, value ){
-			bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
-			bgY = -300*index;
-
-			console.log(value);
-
-			$(value).animate(
-				{
-					backgroundPosition: bgX + 'px ' + bgY + 'px'
-				},
-				SpinDuration,
-				"linear",
-				function() {
-					_this.stopReel( value );
-					if ( index === _this.reels.length - 1 ) // last reel stopped spinning
-						_this.stop(finalPos);
-				}
-			);
-		});
+		this.reels[0].initialSpin();
+		this.reels[1].initialSpin();
+			// bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
+			// bgY = -300*index;
 	},
 
 	stop: function(finalPos) {
@@ -305,37 +329,11 @@ Slot.prototype = {
   },
 
   disableControls: function() {
-  	var _this = this;
   	this.control.prop("disabled", true);
-  	this.reels.on("click", function(event) {
-  		_this.stopReel(event.target);
-  	});
   },
 
   enableControls: function() {
-  	this.reels.off("click");
   	this.control.prop("disabled", false);
-  },
-
-  stopReel: function( reel ) {
-  	var bg = $(reel).css("backgroundPosition").split(" ");
-  	var bgX = parseFloat( bg[0] );
-  	var pos = Math.round( bgX / ImageWidth ) % 13;
-  	console.log(pos);
-
-  	$(reel).off("click");
-  	$(reel).stop(); // .animate(
-			// 	{
-			// 		backgroundPosition: bgX + 'px ' + bgY + 'px'
-			// 	},
-			// 	3200,
-			// 	"easeOutQuint",
-			// 	function() {
-			// 		if ( index == _this.reels.length - 1 ) // last reel stopped spinning
-			// 			_this.stop(finalPos);
-			// 	}
-			// );
-  	// console.log(finalPos[0] % NumberOfImages);
   },
 
   addBone: function() {

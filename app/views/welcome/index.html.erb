@@ -23,8 +23,13 @@
 </div>
 <div class='controls'>
 	<button type='button' id='control' class='spin circle hvr-glow'>Spin!</button>
-	<H1 class='win_count'>Toys: <span class='wins'>0</span></H1>
+</div>
+<div class='trophies zone'>
+	<% (1..13).each do |index| %>
+		<div class='trophy' data-id='<%= index %>'></div>
+	<% end%>
 </div>
 
 <%= render 'bone' %>
 <%= render 'modal' %>
+<%= render 'winning' %>

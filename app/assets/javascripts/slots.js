@@ -222,6 +222,7 @@ Slot.prototype = {
 
 	start: function() {
 		var that = this, bgX, bgY, rotation;
+		this.stopVideo();
 		this.playSound('coin in slot');
 		this.removeBone();
 		this.disableControls();
@@ -284,12 +285,18 @@ Slot.prototype = {
  	playVideo: function(index) {
  		var activeVideo = this.activeVideo = $('video[data-id="' + index + '"]').show();
  		activeVideo.get(0).play();
- 		activeVideo.get(0).addEventListener('ended', function() { activeVideo.hide(); });
+ 		activeVideo.get(0).addEventListener('ended', function() { 
+ 			activeVideo.hide();
+ 			activeVideo.load();
+ 		});
  	},
 
  	stopVideo: function() {
- 		this.activeVideo.get(0).pause();
- 		this.activeVideo.hide();
+ 		if (this.activeVideo && (! this.activeVideo.get(0).paused)){
+ 			this.activeVideo.get(0).pause();
+ 			this.activeVideo.hide();
+ 			this.activeVideo.load();
+ 		}
  	},
 
  	trueMatch: function() {

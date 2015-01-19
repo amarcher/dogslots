@@ -2,10 +2,11 @@
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
-Rotations = 10;
+Rotations = 6;
 InitialSpinDuration = 400;
-MidSpinDuration = 5000;
+MidSpinDuration = 4200;
 EndSpinDuration = 1000;
+TopOffset = 200;
 SpinDuration = 3200;
 
 ion.sound({
@@ -65,11 +66,14 @@ NameArea.prototype = {
   }
 };
 
-function Reel(el) {
+function Reel(el, top, callback) {
 	this.el = el;
+	this.top = top;
 	this._bg = null;
 	this._pos = null;
-	this.goLeft = true;
+	this.goLeft = 1;
+	this.spinning = false;
+	this.callback = callback;
 	this.updatePositions(); // TBD can you call this here?
 }
 
@@ -80,13 +84,11 @@ Reel.prototype = {
 		for (var i=0; i<coords.length; i++){
 			coords[i] = parseFloat(coords[i]);
 		}
-		console.log('bg', coords);
 		return coords;
 	},
 
 	pos: function() {
-		console.log(Math.round(this._bg[0] / ImageWidth) % NumberOfImages);
-		return Math.round(this._bg[0] / ImageWidth) % NumberOfImages;
+		return Math.abs((NumberOfImages - Math.round(this._bg[0] / ImageWidth) % (NumberOfImages * this.goLeft)) % NumberOfImages) + 1;
 	},
 
 	updatePositions: function() {
@@ -97,15 +99,15 @@ Reel.prototype = {
 	initialSpin: function() {
 		// Rotate one full time around
 		var that = this;
-		var bgX = -this.goLeft * NumberOfImages * ImageWidth - this._bg[0];
+		var bgX = -(this.goLeft * (NumberOfImages + Math.random() * NumberOfImages - Math.floor(NumberOfImages / 2)) * ImageWidth - this._bg[0]);
 
-		this.el.animate(
+		this.spinning = true;
+		this.el.delay(!this.top * TopOffset).animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			InitialSpinDuration,
+			InitialSpinDuration - (this.top * TopOffset),
 			"swing",
 			this.midSpin.bind(that)
 		);
-		console.log('here');
 	},
 
 	midSpin: function() {
@@ -120,13 +122,11 @@ Reel.prototype = {
 			that.endSpin();
 		});
 
-		bgX = -this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0];
-
-		console.log(bgX);
+		bgX = -(this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0]);
 
 		this.el.animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			MidSpinDuration,
+			MidSpinDuration - (5 * this.top * TopOffset),
 			"linear",
 			that.endSpin.bind(that)
 		);
@@ -137,6 +137,7 @@ Reel.prototype = {
 		
 		// Update position and remove event handlers
 		this.updatePositions();
+		this.spinning = false;
 		this.el.off("mousedown");
 
 		// Change spin direction for next go
@@ -147,8 +148,6 @@ Reel.prototype = {
 		bgX -= this.remainingRotation();
 		bgX -= (-this.goLeft * ImageWidth); // add one more rotation
 
-		console.log(bgX);
-
 		// Advance reel to end spin position
 		this.el.animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
@@ -156,7 +155,7 @@ Reel.prototype = {
 			"easeOutQuint",
 			function() {
 				that.updatePositions();
-				console.log("pos", that._pos);
+				that.callback(that._pos, that.top );
 			}
 		);
 	},
@@ -171,7 +170,7 @@ Reel.prototype = {
 };
 
 function Slot(els, winEl, boneEl, controlEl, nameEl ) {
-	this.reels = [ new Reel( $(els[0]) ), new Reel( $(els[1]) ) ];
+	this.reels = [ new Reel( $(els[0]), true, this.callback.bind(this) ), new Reel( $(els[1]), false, this.callback.bind(this) ) ];
 	this.positions = [0,0];
 	this.winTallyArea = winEl;
 	this.winCount = 0;
@@ -188,32 +187,23 @@ function Slot(els, winEl, boneEl, controlEl, nameEl ) {
 Slot.prototype = {
 
 	setUpGame: function() {
-		var _this = this;
+		var that = this;
 		// add start bones
 		this.addBones(StartBones);
 		// set up click controller
 		this.control.click( function() {
-		  _this.start(_this.finalPos());
+		  that.start();
 		});
 		this.clearDogName();
 	},
 
-	start: function(finalPos) {
-		var _this = this, bgX, bgY, rotation;
+	start: function() {
+		var that = this, bgX, bgY, rotation;
 		this.playSound('coin in slot');
 		this.removeBone();
 		this.disableControls();
 		this.clearDogName();
-
-		// begin the spin
-
-		// continue the spin
-
-		// if unstopped stop the spin
-
-		// determine rotation and change direction
-		rotation = -this.goLeft * Rotations * NumberOfImages * ImageWidth;
-		this.goLeft = -this.goLeft;
+		this.positions = [0,0];
 
 		// spin reels
 		this.reels[0].initialSpin();
@@ -222,24 +212,22 @@ Slot.prototype = {
 			// bgY = -300*index;
 	},
 
-	stop: function(finalPos) {
+	callback: function(finalPos, top) {
+		var index = top ? 0 : 1;
+		this.positions[index] = finalPos;
 
-		if (! finalPos) {
+		if ((! this.reels[0].spinning) && (! this.reels[1].spinning)) {
+			this.setDogName();
 
+			if (this.winner()) {
+				this.win();
+				this.enableControls();
+			} else if (this.boneTally === 0) {
+				this.gameOver();
+			} else {
+				this.enableControls();
+			}
 		} 
-
-		this.positions = finalPos;
-		console.log(finalPos);
-		this.setDogName();
-
-		if (this.winner()) {
-			this.win();
-			this.enableControls();
-		} else if (this.boneTally === 0) {
-			this.gameOver();
-		} else {
-			this.enableControls();
-		}
  	},
 
  	winner: function() {
@@ -267,14 +255,6 @@ Slot.prototype = {
  	trueMatch: function() {
  		return this.positions[0] === this.positions[1];
  	},
-
- 	finalPos: function() {
- 		var newPostions = [];
- 		for ( var i=0, len=this.reels.length; i < len; i++ ) {
- 			newPostions.push( Math.floor( ( Math.random() * NumberOfImages ) ) + 1 );
-    }
-	  return newPostions;
-  },
 
   payout: function() {
   	// double wolf is a mega win 
@@ -312,18 +292,18 @@ Slot.prototype = {
   },
 
   gameOver: function() {
-  	var _this = this;
+  	var that = this;
 	  var html = modal_template({toys: this.winCount, plural: this.winCount === 1 ? "" : "s" });
 	  $('body').append(html);
 	  $('#start_over').on('click',function(){
-	  	_this.restart();
-	  	_this.playSound('game start');
+	  	that.restart();
+	  	that.playSound('game start');
 	  	$('#overlay, #modal').remove();
 	  });
 	  $('#get_more_bones').on('click',function(){ 
-	  	_this.addBones(StartBones);
-	  	_this.enableControls();
-	  	_this.playSound('register');
+	  	that.addBones(StartBones);
+	  	that.enableControls();
+	  	that.playSound('register');
 	  	$('#overlay, #modal').remove();
 	  });
   },

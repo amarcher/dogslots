@@ -29,6 +29,7 @@
 		<div class='trophy' data-id='<%= index %>'></div>
 	<% end%>
 </div>
+<input type='hidden' class='debug_mode' name='debug_mode' value='<%= @debug if @debug %>'/>
 
 <%= render 'bone' %>
 <%= render 'modal' %>

@@ -1,6 +1,5 @@
 // Constants
 DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
-DebugMode = 3;
 var debugIndex = 0;
 NumberOfImages = 13;
 ImageWidth = 432;
@@ -416,6 +415,8 @@ Slot.prototype = {
 
 $(document).ready(function() {
 	// precompile templates
+	DebugMode = parseInt($('.debug_mode').val());
+
 	var bone_source   = $("#bone-template").html();
 	var modal_source   = $("#modal-template").html();
 	var winning_source   = $("#winning-template").html();

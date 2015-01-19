@@ -216,3 +216,24 @@ button.oval {
 #slot2 {
   background-position : 0px -300px;
 }
+
+.video {
+  position: absolute;
+  display:table;
+  top: 0px;
+  left: 0px;
+  width: 432px;
+  height: 100%;
+  padding: 20px;
+}
+
+video {
+  display:table-cell;
+  vertical-align:middle;
+  position: relative;
+  margin: 0px auto;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -o-border-radius: 10px;
+}

@@ -4,7 +4,7 @@ ImageWidth = 432;
 StartBones = 5;
 Rotations = 6;
 InitialSpinDuration = 400;
-MidSpinDuration = 4200;
+MidSpinDuration = 5200;
 EndSpinDuration = 1000;
 TopOffset = 200;
 SpinDuration = 3200;
@@ -127,7 +127,7 @@ Reel.prototype = {
 
 		this.el.animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			MidSpinDuration - (5 * this.top * TopOffset),
+			MidSpinDuration - (12 * this.top * TopOffset),
 			"linear",
 			that.endSpin.bind(that)
 		);
@@ -184,8 +184,9 @@ function Slot(els, winEl, boneEl, controlEl, nameEl ) {
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
 	this.nameArea = new NameArea( nameEl );
+	this.activeVideo = null;
+	this.goLeft = 1;
 	this.setUpGame();
-	this.goLeft = true;
 }
 
 Slot.prototype = {
@@ -194,11 +195,29 @@ Slot.prototype = {
 		var that = this;
 		// add start bones
 		this.addBones(StartBones);
-		// set up click controller
+		// set up click & "s" key controller
 		this.control.click( function() {
 		  that.start();
 		});
+
 		this.clearDogName();
+
+		// event handlers for end-game
+		$(document).on('click', '#start_over', function(event){
+	  	event.stopPropagation();
+	  	console.log('starting over');
+	  	that.restart();
+	  	that.playSound('game start');
+	  	$('#overlay, #modal').remove();
+	  });
+	  $(document).on('click', '#get_more_bones', function(event){ 
+	  	event.stopPropagation();
+	  	console.log('getting more bones');
+	  	that.addBones(StartBones);
+	  	that.enableControls();
+	  	that.playSound('register');
+	  	$('#overlay, #modal').remove();
+	  });
 	},
 
 	start: function() {
@@ -226,8 +245,9 @@ Slot.prototype = {
 			if (this.winner()) {
 				this.win();
 				this.enableControls();
-			} else if (this.boneTally === 0) {
-				this.gameOver();
+			} else if ((!this.winner()) && this.boneTally === 0) {
+				var that = this;
+				setTimeout(function() { console.log(that);that.gameOver(); }, 600);
 			} else {
 				this.enableControls();
 			}
@@ -254,6 +274,22 @@ Slot.prototype = {
 	 	}
 
 	 	this.playSound('success');
+	 	this.playVideo(1);
+ 	},
+
+ 	playSound: function(name) {
+  	ion.sound.play(name);
+  },
+
+ 	playVideo: function(index) {
+ 		var activeVideo = this.activeVideo = $('video[data-id="' + index + '"]').show();
+ 		activeVideo.get(0).play();
+ 		activeVideo.get(0).addEventListener('ended', function() { activeVideo.hide(); });
+ 	},
+
+ 	stopVideo: function() {
+ 		this.activeVideo.get(0).pause();
+ 		this.activeVideo.hide();
  	},
 
  	trueMatch: function() {
@@ -267,10 +303,6 @@ Slot.prototype = {
   	} else {
 	  	return 5;
 	  }
-  },
-
-  playSound: function(name) {
-  	ion.sound.play(name);
   },
 
   setDogName: function() {
@@ -296,20 +328,11 @@ Slot.prototype = {
   },
 
   gameOver: function() {
-  	var that = this;
 	  var html = modal_template({toys: this.winCount, plural: this.winCount === 1 ? "" : "s" });
-	  $('body').append(html);
-	  $('#start_over').on('click',function(){
-	  	that.restart();
-	  	that.playSound('game start');
-	  	$('#overlay, #modal').remove();
-	  });
-	  $('#get_more_bones').on('click',function(){ 
-	  	that.addBones(StartBones);
-	  	that.enableControls();
-	  	that.playSound('register');
-	  	$('#overlay, #modal').remove();
-	  });
+	  $(html).css("opacity","0").appendTo('body').animate(
+	  	{opacity: "0.7"},
+	  	1000
+	  );
   },
 
   disableControls: function() {

@@ -1,6 +1,27 @@
-NumberOfImages = 9;
+// Constants
+NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
+Rotations = 6;
+InitialSpinDuration = 400;
+MidSpinDuration = 5200;
+EndSpinDuration = 1000;
+TopOffset = 200;
+SpinDuration = 3200;
+
+ion.sound({
+  sounds: [
+    {name: "dog bark"},
+    {name: "register"},
+    {name: "success"},
+    {name: "coin in slot"},
+    {name: "game start"},
+    {name: "tap"}
+  ],
+  volume: 1,
+  path: "sounds/",
+  preload: true
+});
 
 function Bone(boneId) {
 	this.el = null;
@@ -26,72 +47,135 @@ Bone.prototype = {
       top: "+=100vh",
     }, 500 ).hide(1000);
 	}
-
 };
 
-FirstNames = 	[null,
-							'Aussie',
-							'Boston',
-							'Boy',
-							'Chi',
-							'Chocolate',
-							'Cocker',
-							'Poo',
-							'Portuguese',
-							'Yellow'];
-LastNames = 	[null,
-							'-shephard',
-							'-terrier',
-							'-kin',
-							'-huahua',
-							'-labrador',
-							'-spaniel',
-							'-dle',
-							'-waterdog',
-							'-lab'];
-
-ion.sound({
-  sounds: [
-    {
-      name: "door_bell"
-    }
-  ],
-  volume: 1,
-  path: "sounds/",
-  preload: true
-});
-
-function NameWheel(el) {
-	this.carousel = el;
-	this.panelCount = el.children().length;
-	this.activeEl = $(el.children()[0]);
-	this.pos = this.activeEl.index();
-	this.theta = this.pos * ( 360 / this.panelCount );
-	this.activeEl.addClass('result');
+function NameArea( node ) {
+	this.names = node.children();
+	this.activeEl = null;
 }
 
-NameWheel.prototype = {
+NameArea.prototype = {
+  display: function( newPos ) {
+  	this.activeEl = $('[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]');
+  	this.activeEl.toggleClass('hide');
+  },
 
-  spin: function( newPos ){
-  	this.activeEl.toggleClass('result');
-  	var destination = '[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]';
-  	var destEl = $(this.carousel.find(destination));
-  	var destIndex = destEl.index();
-    var increment = destIndex - this.pos;
-    this.pos = destIndex;
-    this.theta += ( 360 / this.panelCount ) * increment * -1;
-    this.carousel.css(
-    	{ transform: 'rotateX(' + this.theta + 'deg)' }
-  	);
-  	this.activeEl = destEl;
-  	this.activeEl.toggleClass('result');
+  clearOut: function() {
+  	if (this.activeEl) {
+  		this.activeEl.toggleClass('hide');
+  	}
   }
 };
 
-function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
-	this.reels = els;
+function Reel(el, top, callback) {
+	this.el = el;
+	this.top = top;
+	this._bg = null;
+	this._pos = null;
+	this.goLeft = 1;
+	this.spinning = false;
+	this.callback = callback;
+	this.updatePositions(); // TBD can you call this here?
+}
+
+Reel.prototype = {
+
+	bg: function() {
+		var coords = this.el.css("backgroundPosition").split(" ");
+		for (var i=0; i<coords.length; i++){
+			coords[i] = parseFloat(coords[i]);
+		}
+		return coords;
+	},
+
+	pos: function() {
+		return Math.abs((NumberOfImages - Math.round(this._bg[0] / ImageWidth) % (NumberOfImages * this.goLeft)) % NumberOfImages) + 1;
+	},
+
+	updatePositions: function() {
+		this._bg = this.bg();
+		this._pos = this.pos();
+	},
+
+	initialSpin: function() {
+		// Rotate one full time around
+		var that = this;
+		var bgX = -(this.goLeft * (NumberOfImages + Math.random() * NumberOfImages - Math.floor(NumberOfImages / 2)) * ImageWidth - this._bg[0]);
+
+		this.spinning = true;
+		this.el.delay(!this.top * TopOffset).animate(
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
+			InitialSpinDuration - (this.top * TopOffset),
+			"swing",
+			this.midSpin.bind(that)
+		);
+	},
+
+	midSpin: function() {
+		var bgX, that = this;
+		
+		// Update positions and attach event handlers
+		this.updatePositions();
+		this.el.on("mousedown", function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			that.el.stop(); // stop midspin animation
+			that.endSpin();
+		});
+
+		bgX = -(this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0]);
+
+		this.el.animate(
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
+			MidSpinDuration - (12 * this.top * TopOffset),
+			"linear",
+			that.endSpin.bind(that)
+		);
+	},
+
+	endSpin: function() {
+		var bgX, that = this;
+		
+		// Update position and remove event handlers
+		this.updatePositions();
+		this.spinning = false;
+		this.el.off("mousedown");
+
+		// Play sound
+		ion.sound.play("tap");
+
+		// Change spin direction for next go
+		this.goLeft = -this.goLeft;
+		
+		// Calculate end spin position
+		bgX = this._bg[0];
+		bgX -= this.remainingRotation();
+		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
+
+		// Advance reel to end spin position
+		this.el.animate(
+			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
+			EndSpinDuration,
+			"easeOutQuint",
+			function() {
+				that.updatePositions();
+				that.callback(that._pos, that.top );
+			}
+		);
+	},
+
+	finalPos: function() {
+ 		return Math.floor( ( Math.random() * NumberOfImages ) ) + 1;
+  },
+
+  remainingRotation: function() {
+  	return this._bg[0] % ImageWidth;
+  }
+};
+
+function Slot(els, winEl, boneEl, controlEl, nameEl ) {
+	this.reels = [ new Reel( $(els[0]), true, this.callback.bind(this) ), new Reel( $(els[1]), false, this.callback.bind(this) ) ];
 	this.positions = [0,0];
-	this.nameWheel = new NameWheel( $(nameWheelEl) );
 	this.winTallyArea = winEl;
 	this.winCount = 0;
 	this.bones = [];
@@ -99,111 +183,141 @@ function Slot(els, winEl, boneEl, controlEl, nameEls, nameWheelEl) {
 	this.boneTally = 0;
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
-	this.firstName = $(nameEls[0]);
-	this.lastName = $(nameEls[1]);
+	this.nameArea = new NameArea( nameEl );
+	this.activeVideo = null;
+	this.goLeft = 1;
 	this.setUpGame();
 }
 
 Slot.prototype = {
 
 	setUpGame: function() {
-		var _this = this;
+		var that = this;
 		// add start bones
 		this.addBones(StartBones);
-		// set up click controller
+		// set up click & "s" key controller
 		this.control.click( function() {
-		  _this.start(_this.finalPos());
+		  that.start();
 		});
+
 		this.clearDogName();
+
+		// event handlers for end-game
+		$(document).on('click', '#start_over', function(event){
+	  	event.stopPropagation();
+	  	console.log('starting over');
+	  	that.restart();
+	  	that.playSound('game start');
+	  	$('#overlay, #modal').remove();
+	  });
+	  $(document).on('click', '#get_more_bones', function(event){ 
+	  	event.stopPropagation();
+	  	console.log('getting more bones');
+	  	that.addBones(StartBones);
+	  	that.enableControls();
+	  	that.playSound('register');
+	  	$('#overlay, #modal').remove();
+	  });
 	},
 
-	start: function(finalPos) {
-		var _this = this;
-		
-		// decrement boneTally
+	start: function() {
+		var that = this, bgX, bgY, rotation;
+		this.stopVideo();
+		this.playSound('coin in slot');
 		this.removeBone();
-
-		// disable button
 		this.disableControls();
-
-		// clear dog name
 		this.clearDogName();
-
-		// spin nameWheel
-		this.nameWheel.spin(finalPos);
+		this.positions = [0,0];
 
 		// spin reels
-		$.each( this.reels, function( index, value ){
-			$(value).animate(
-				{
-					backgroundPosition: -10*finalPos[index]*ImageWidth + 'px ' + -300*index + 'px'
-				},
-				3200,
-				"easeOutQuint",
-				function() {
-					if ( index == _this.reels.length - 1 ) // last reel stopped spinning
-						_this.stop(finalPos);
-				}
-			);
-		});
+		this.reels[0].initialSpin();
+		this.reels[1].initialSpin();
+			// bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
+			// bgY = -300*index;
 	},
 
-	stop: function(finalPos) {
+	callback: function(finalPos, top) {
+		var index = top ? 0 : 1;
+		this.positions[index] = finalPos;
 
-		if (finalPos) {
-			this.positions = finalPos;
+		if ((! this.reels[0].spinning) && (! this.reels[1].spinning)) {
 			this.setDogName();
-		} else {
-			// find final position
-		}
-		if (this.positions[0] === this.positions[1]) {
-			this.winner();
-			this.enableControls();
-		} else if (this.boneTally === 0) {
-			this.gameOver();
-		} else {
-			this.enableControls();
-		}
+
+			if (this.winner()) {
+				this.win();
+				this.enableControls();
+			} else if ((!this.winner()) && this.boneTally === 0) {
+				var that = this;
+				setTimeout(function() { console.log(that);that.gameOver(); }, 600);
+			} else {
+				this.enableControls();
+			}
+		} 
  	},
 
  	winner: function() {
- 		this.winCount += 1;
- 		this.winTallyArea.text( this.winCount );
+ 		if (this.positions[0] === 13 || this.positions[1] === 13) {
+ 			return true;
+ 		} else {
+ 			return this.trueMatch();
+ 		}
+ 	},
+
+ 	win: function() {
+ 		if ( this.trueMatch() ) {
+	 		this.winCount += 1;
+	 		this.winTallyArea.text( this.winCount );
+	 	}
  		
  		var payout = this.payout();
  		for (var i=0; i<payout; i++) {
  			this.addBone();
 	 	}
 
-		ion.sound.play("door_bell");
-		setTimeout(function() {
-			ion.sound.play("door_bell");
-		}, 500);
+	 	this.playSound('success');
+	 	this.playVideo(1);
  	},
 
- 	finalPos: function() {
- 		var newPostions = [];
- 		for ( var i=0, len=this.reels.length; i < len; i++ ) {
- 			newPostions.push( Math.floor( ( Math.random() * NumberOfImages ) + 1 ) );
-	    }
-	  return newPostions;
+ 	playSound: function(name) {
+  	ion.sound.play(name);
   },
 
+ 	playVideo: function(index) {
+ 		var activeVideo = this.activeVideo = $('video[data-id="' + index + '"]').show();
+ 		activeVideo.get(0).play();
+ 		activeVideo.get(0).addEventListener('ended', function() { 
+ 			activeVideo.hide();
+ 			activeVideo.load();
+ 		});
+ 	},
+
+ 	stopVideo: function() {
+ 		if (this.activeVideo && (! this.activeVideo.get(0).paused)){
+ 			this.activeVideo.get(0).pause();
+ 			this.activeVideo.hide();
+ 			this.activeVideo.load();
+ 		}
+ 	},
+
+ 	trueMatch: function() {
+ 		return this.positions[0] === this.positions[1];
+ 	},
+
   payout: function() {
-  	return 5;
+  	// double wolf is a mega win 
+  	if (this.positions[0] === this.positions[1] === 13) {
+  		return 25;
+  	} else {
+	  	return 5;
+	  }
   },
 
   setDogName: function() {
-  	console.log( this.positions );
-  	var first = FirstNames[ this.positions[0] ];
-  	var last = LastNames[ this.positions[1] ];
-  	this.firstName.text( first );
-  	this.lastName.text( last );
+  	this.nameArea.display( this.positions );
   },
 
   clearDogName: function() {
-  	this.firstName.text('');
-  	this.lastName.text('');
+  	this.nameArea.clearOut();
   },
 
   restart: function() {
@@ -221,18 +335,11 @@ Slot.prototype = {
   },
 
   gameOver: function() {
-  	var _this = this;
-	  var html = modal_template({toys: this.winCount});
-	  $('body').append(html);
-	  $('#start_over').on('click',function(){
-	  	_this.restart();
-	  	$('#overlay, #modal').remove();
-	  });
-	  $('#get_more_bones').on('click',function(){ 
-	  	_this.addBones(StartBones);
-	  	_this.enableControls();
-	  	$('#overlay, #modal').remove();
-	  });
+	  var html = modal_template({toys: this.winCount, plural: this.winCount === 1 ? "" : "s" });
+	  $(html).css("opacity","0").appendTo('body').animate(
+	  	{opacity: "0.7"},
+	  	1000
+	  );
   },
 
   disableControls: function() {
@@ -275,5 +382,5 @@ $(document).ready(function() {
 	bone_template = Handlebars.compile(bone_source);
 	modal_template = Handlebars.compile(modal_source);
 
-	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname span'), $('.carousel') );
+	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname') );
 });

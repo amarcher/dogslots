@@ -1,28 +1,29 @@
+<div class='text_title zone'></div>
 <div class='slot_machine zone'>
-	<div class='display'>
+	<div class='display dotted-border'>
 		<div class='slot' id='slot1'></div>
 		<div class='slot' id='slot2'></div>
-	</div>
-	<div class='controls'>
-		<H1 class='win_count'>Toys: <span class='wins'>0</span></H1>
-		<button type='button' id='control' class='spin'>Spin!</button>
-		<H1 class='dogname hide'><span class='first'></span><span class='last'></span></H1>
+		<div class='video hide'>
+			<video webkit-playsinline data-id='1' class='hide' width='432px' height='600px' src='./movies/Aussie_Animation.mp4' type='vide/mp4'>
+			</video>
+		</div>
+	<H1 class='dogname impact tracking big'>
+		<% @dogs.shuffle.each do |dog| %> 
+			<span class='hide <%= "match" if dog.match %><%= " wild" if (dog.posone == 13 || dog.postwo == 13) %>' data-posone='<%= dog.posone %>' data-postwo='<%= dog.postwo %>'>
+				<%= dog.name.upcase %>
+			</span>
+		<% end %>
+	</H1>
 	</div>
 </div>
 <div class='bone_drop zone'>
 	<div class='bowl hide'>
-		<H1 class='bone_count hide'>Bones: <span class='bones'>10</span></H1>
+		<H1 class='bone_count hide impact'>Bones: <span class='bones'>10</span></H1>
 	</div>
 </div>
-<div class='name_carousel zone'>
-	<div class="needle"></div>
-	<div class="carousel">
-		<% @dogs.shuffle.each do |dog| %> 
-			<figure class='<%= "match" if dog.match %>' data-posone='<%= dog.posone %>' data-postwo='<%= dog.postwo %>'>
-				<%= dog.name %>
-			</figure>
-		<% end %>
-	</div>
+<div class='controls'>
+	<button type='button' id='control' class='spin circle hvr-glow'>Spin!</button>
+	<H1 class='win_count'>Toys: <span class='wins'>0</span></H1>
 </div>
 
 <%= render 'bone' %>

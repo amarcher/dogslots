@@ -1,11 +1,12 @@
-$panelCount: 81;
-$panelSize: 18;
+$panelCount: 169;
+$panelSize: 14;
 
 @function theta() {
 	@return 360 / $panelCount;
 }
 
 @function radius() {
+	@debug pi() / $panelCount;
 	@return ( $panelSize / 2 ) / tan( pi() / $panelCount );
 }
 

@@ -1,4 +1,5 @@
 // Constants
+Debug = true;
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
@@ -152,6 +153,10 @@ Reel.prototype = {
 		bgX -= this.remainingRotation();
 		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
 
+		if (Debug) {
+			bgX = 0;
+		}
+
 		// Advance reel to end spin position
 		this.el.animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
@@ -186,6 +191,7 @@ function Slot(els, winEl, boneEl, controlEl, nameEl ) {
 	this.nameArea = new NameArea( nameEl );
 	this.activeVideo = null;
 	this.goLeft = 1;
+	this.trophies = [];
 	this.setUpGame();
 }
 
@@ -266,7 +272,22 @@ Slot.prototype = {
  	win: function() {
  		if ( this.trueMatch() ) {
 	 		this.winCount += 1;
+	 		var match = this.positions[0];
+
+	 		if (this.trophies.indexOf(match) === -1) {
+	 			this.trophies.push(match);
+	 			console.log($('.trophy[data-id="'+match+'"]'));
+	 			$('.trophy[data-id="'+match+'"]').css({
+			     '-webkit-transform' : 'rotateY(-1080deg)',
+			     '-moz-transform' : 'rotateY(-1080deg)',  
+			      '-ms-transform' : 'rotateY(-1080deg)',  
+			       '-o-transform' : 'rotateY(-1080deg)',  
+			          'transform' : 'rotateY(-1080deg)'
+	 			}).addClass('earned');
+	 		}
+
 	 		this.winTallyArea.text( this.winCount );
+	 		this.playVideo(1);
 	 	}
  		
  		var payout = this.payout();
@@ -275,7 +296,6 @@ Slot.prototype = {
 	 	}
 
 	 	this.playSound('success');
-	 	this.playVideo(1);
  	},
 
  	playSound: function(name) {
@@ -331,6 +351,8 @@ Slot.prototype = {
   	this.addBones(StartBones);
   	this.winCount = 0;
   	this.winTallyArea.text(this.winCount);
+  	this.trophies = [];
+  	$('.trophy').removeClass('earned');
   	this.enableControls();
   },
 

@@ -21,6 +21,13 @@
           transform: $value;
 }
 
+* {
+  -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
 
 .hide {
   display: none;
@@ -97,11 +104,14 @@ body {
 }
 
 .dotted-border {
-  border-width: 20px;
+  border-width: 25px;
   border-style:dotted;
-  -webkit-border-image: url(image-path('border.png')) 40 40 round; /* Safari 3.1-5 */
-  -o-border-image: url(image-path('border.png')) 40 40 round; /* Opera 11-12.1 */
-  border-image: url(image-path('border.png')) 40 40 round;
+  -webkit-border-image-slice: 28%;
+  -o-border-image-slice: 28%;
+  border-image-slice: 28%;
+  -webkit-border-image: url(image-path('border2.png')) 40 40 scale; /* Safari 3.1-5 */
+  -o-border-image: url(image-path('border2.png')) 40 40 round; /* Opera 11-12.1 */
+  border-image: url(image-path('border2.png')) 40 40 round;
 }
 
 .bone_drop {

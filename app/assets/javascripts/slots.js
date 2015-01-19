@@ -1,6 +1,6 @@
 // Constants
-DebugModes = ["Off","First","AdvanceToWin","WinOneThenLose"];
-DebugMode = 2;
+DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
+DebugMode = 3;
 var debugIndex = 0;
 NumberOfImages = 13;
 ImageWidth = 432;
@@ -161,7 +161,7 @@ Reel.prototype = {
 			bgX = Math.floor(debugIndex/2) * ImageWidth;
 			debugIndex++;
 		} else if (DebugMode === 3) {
-			bgX = (debugIndex === 0) ? 0 : ImageWidth * debugIndex % 3;
+			bgX = (debugIndex % 2 === 0) ? ImageWidth : bgX;
 			debugIndex++;
 		}
 
@@ -198,6 +198,7 @@ function Slot(els, boneEl, controlEl, nameEl ) {
 	this.activeVideo = null;
 	this.goLeft = 1;
 	this.trophies = [];
+	this.spinningReels = 0;
 	this.setUpGame();
 }
 
@@ -242,6 +243,7 @@ Slot.prototype = {
 		this.positions = [0,0];
 
 		// spin reels
+		this.spinningReels = 2;
 		this.reels[0].initialSpin();
 		this.reels[1].initialSpin();
 			// bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
@@ -252,8 +254,9 @@ Slot.prototype = {
 		var that = this;
 		var index = top ? 0 : 1;
 		this.positions[index] = finalPos;
+		this.spinningReels--;
 
-		if ((! this.reels[0].spinning) && (! this.reels[1].spinning)) {
+		if (this.spinningReels === 0) {
 			this.setDogName();
 
 			if (this.winner()) {
@@ -332,7 +335,7 @@ Slot.prototype = {
 
   payout: function() {
   	// double wolf is a mega win 
-  	if (this.positions[0] === this.positions[1] === 13) {
+  	if (this.positions[0] === 13 && this.positions[1] === 13) {
   		return 25;
   	} else {
 	  	return 5;

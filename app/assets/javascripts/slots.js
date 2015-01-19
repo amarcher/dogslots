@@ -1,5 +1,7 @@
 // Constants
-Debug = true;
+DebugModes = ["Off","First","AdvanceToWin","WinOneThenLose"];
+DebugMode = 2;
+var debugIndex = 0;
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
@@ -153,8 +155,14 @@ Reel.prototype = {
 		bgX -= this.remainingRotation();
 		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
 
-		if (Debug) {
+		if (DebugMode === 1) {
 			bgX = 0;
+		} else if (DebugMode === 2) {
+			bgX = Math.floor(debugIndex/2) * ImageWidth;
+			debugIndex++;
+		} else if (DebugMode === 3) {
+			bgX = (debugIndex === 0) ? 0 : ImageWidth * debugIndex % 3;
+			debugIndex++;
 		}
 
 		// Advance reel to end spin position
@@ -178,11 +186,9 @@ Reel.prototype = {
   }
 };
 
-function Slot(els, winEl, boneEl, controlEl, nameEl ) {
+function Slot(els, boneEl, controlEl, nameEl ) {
 	this.reels = [ new Reel( $(els[0]), true, this.callback.bind(this) ), new Reel( $(els[1]), false, this.callback.bind(this) ) ];
 	this.positions = [0,0];
-	this.winTallyArea = winEl;
-	this.winCount = 0;
 	this.bones = [];
 	this.nextBoneId = 0;
 	this.boneTally = 0;
@@ -243,6 +249,7 @@ Slot.prototype = {
 	},
 
 	callback: function(finalPos, top) {
+		var that = this;
 		var index = top ? 0 : 1;
 		this.positions[index] = finalPos;
 
@@ -253,12 +260,16 @@ Slot.prototype = {
 				this.win();
 				this.enableControls();
 			} else if ((!this.winner()) && this.boneTally === 0) {
-				var that = this;
-				setTimeout(function() { console.log(that);that.gameOver(); }, 600);
+				setTimeout(function() { that.gameOver(); }, 600);
 			} else {
 				this.enableControls();
 			}
-		} 
+
+			if (this.trophies.length == NumberOfImages) {
+				console.log('over!');
+				setTimeout(function() { that.endGameWithWin(); }, 9000);
+			}
+		}
  	},
 
  	winner: function() {
@@ -271,22 +282,18 @@ Slot.prototype = {
 
  	win: function() {
  		if ( this.trueMatch() ) {
-	 		this.winCount += 1;
 	 		var match = this.positions[0];
-
 	 		if (this.trophies.indexOf(match) === -1) {
 	 			this.trophies.push(match);
 	 			console.log($('.trophy[data-id="'+match+'"]'));
 	 			$('.trophy[data-id="'+match+'"]').css({
-			     '-webkit-transform' : 'rotateY(-1080deg)',
-			     '-moz-transform' : 'rotateY(-1080deg)',  
-			      '-ms-transform' : 'rotateY(-1080deg)',  
-			       '-o-transform' : 'rotateY(-1080deg)',  
-			          'transform' : 'rotateY(-1080deg)'
+			     '-webkit-transform' : 'rotateY(-3240deg)',
+			     '-moz-transform' : 'rotateY(-3240deg)',  
+			      '-ms-transform' : 'rotateY(-3240deg)',  
+			       '-o-transform' : 'rotateY(-3240deg)',  
+			          'transform' : 'rotateY(-3240deg)'
 	 			}).addClass('earned');
 	 		}
-
-	 		this.winTallyArea.text( this.winCount );
 	 		this.playVideo(1);
 	 	}
  		
@@ -349,15 +356,13 @@ Slot.prototype = {
   	}
 
   	this.addBones(StartBones);
-  	this.winCount = 0;
-  	this.winTallyArea.text(this.winCount);
   	this.trophies = [];
   	$('.trophy').removeClass('earned');
   	this.enableControls();
   },
 
   gameOver: function() {
-	  var html = modal_template({toys: this.winCount, plural: this.winCount === 1 ? "" : "s" });
+	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
 	  $(html).css("opacity","0").appendTo('body').animate(
 	  	{opacity: "0.7"},
 	  	1000
@@ -382,7 +387,10 @@ Slot.prototype = {
   },
 
   addBones: function(bones) {
-  	for ( var i=0; i<bones; i++ ) {
+  	for ( var i=0; i<this.bones.length; i++ ) {
+  		this.removeBone();
+  	}
+  	for ( var j=0; j<bones; j++ ) {
   		this.addBone();
   	}
   },
@@ -392,6 +400,14 @@ Slot.prototype = {
   	bone.remove();
   	this.boneTally--;
   	this.boneTallyArea.text( this.boneTally );
+  },
+
+  endGameWithWin: function() {
+  	var html = winning_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
+  	$(html).css("opacity","0").appendTo('body').animate(
+  		{opacity: "0.7"},
+  		1000
+  	);
   }
 };
 
@@ -399,10 +415,12 @@ $(document).ready(function() {
 	// precompile templates
 	var bone_source   = $("#bone-template").html();
 	var modal_source   = $("#modal-template").html();
+	var winning_source   = $("#winning-template").html();
 
 	// global variable
 	bone_template = Handlebars.compile(bone_source);
 	modal_template = Handlebars.compile(modal_source);
+	winning_template = Handlebars.compile(winning_source);
 
-	var slot = new Slot( $('.slot'), $('.wins'), $('.bones'), $('#control'), $('.dogname') );
+	var slot = new Slot( $('.slot'), $('.bones'), $('#control'), $('.dogname') );
 });

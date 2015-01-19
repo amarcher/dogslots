@@ -110,15 +110,15 @@ body {
     background-image: url(image-path('SmallLineup.png'));
     background-repeat: no-repeat;
     -webkit-transform-style: preserve-3d;
-  -webkit-transition: -webkit-transform 3s linear;
-  -moz-transform-style: preserve-3d;
-  -moz-transition: -moz-transform 3s linear;
-  -o-transform-style: preserve-3d;
-  -o-transition: -o-transform 3s linear;
-  transform-style: preserve-3d;
-  transition: transform 3s linear;
-  -ms-transform-style: preserve-3d;
-  -ms-transition: -ms-transform 3s linear;
+    -webkit-transition: -webkit-transform 9s linear;
+    -moz-transform-style: preserve-3d;
+    -moz-transition: -moz-transform 9s linear;
+    -o-transform-style: preserve-3d;
+    -o-transition: -o-transform 9s linear;
+    transform-style: preserve-3d;
+    transition: transform 9s linear;
+    -ms-transform-style: preserve-3d;
+    -ms-transition: -ms-transform 9s linear;
   }
   @for $i from 0 through 13 {
     .trophy:nth-child( #{$i + 1} ) {
@@ -172,11 +172,11 @@ body {
 }
 
 .dogname {
-  .match {
-    color: #13A589;
-  }
   .wild {
     color: rgb(190, 165, 65);
+  }
+  .match {
+    color: #13A589;
   }
 }
 

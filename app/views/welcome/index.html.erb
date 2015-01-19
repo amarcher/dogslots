@@ -4,7 +4,8 @@
 		<div class='slot' id='slot1'></div>
 		<div class='slot' id='slot2'></div>
 		<div class='video hide'>
-			<video data-id='1' class='hide' width='432px' height='600px' src='./movies/Aussie_Animation.mp4'></video>
+			<video webkit-playsinline data-id='1' class='hide' width='432px' height='600px' src='./movies/Aussie_Animation.mp4' type='vide/mp4'>
+			</video>
 		</div>
 	<H1 class='dogname impact tracking big'>
 		<% @dogs.shuffle.each do |dog| %> 

@@ -15,7 +15,8 @@ ion.sound({
     {name: "register"},
     {name: "success"},
     {name: "coin in slot"},
-    {name: "game start"}
+    {name: "game start"},
+    {name: "tap"}
   ],
   volume: 1,
   path: "sounds/",
@@ -140,13 +141,16 @@ Reel.prototype = {
 		this.spinning = false;
 		this.el.off("mousedown");
 
+		// Play sound
+		ion.sound.play("tap");
+
 		// Change spin direction for next go
 		this.goLeft = -this.goLeft;
 		
 		// Calculate end spin position
 		bgX = this._bg[0];
 		bgX -= this.remainingRotation();
-		bgX -= (-this.goLeft * ImageWidth); // add one more rotation
+		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
 
 		// Advance reel to end spin position
 		this.el.animate(

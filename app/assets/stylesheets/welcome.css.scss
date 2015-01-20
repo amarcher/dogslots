@@ -4,6 +4,9 @@
 @import "trig";
 @import "wheel"; // Requires trig
 
+$pink: rgb(255, 211, 226);
+$darker: 10%;
+
 @font-face{
   font-family: "Impact";
   src: font-url('Impact.ttf') format('truetype');
@@ -138,10 +141,9 @@ body {
 }
 
 .controls {
-  position: relative;
-  float: left;
+  position: static;
   width: 160px;
-  margin: 0px 40px;
+  margin: 0px auto;
 }
 
 .dotted-border {
@@ -156,18 +158,20 @@ body {
 }
 
 .bone_drop {
-  width: 200px;
-  margin-left: 40px;
+  width: 300px;
+  padding: 20px 30px; 
 }
 
 .bone_drop {
   .bowl {
-    position: relative;
-    top: 40vh;
-    height: 200px;
+    position: block;
+    width: 240px;
+    height: 140px;
+    background-size: 240px 140px;
     z-index: 100;
-    background-image: url(image-path('dog_bowl_image.png'));
+    background-image: url(image-path('Bowl-half_full.png'));
     background-repeat: no-repeat;
+    margin: 200px auto 10px;
   }
 }
 
@@ -217,21 +221,25 @@ body {
   box-shadow: 0 0 28px rgba(0, 0, 0, 0.9);
 }
 
+button:focus {outline:0;}
+
 button.circle {
+  background-color: darken($pink, $darker);
 	display: block;
 	margin: 10px auto;
-	width: 100px;
-	height: 100px;
+	width: 150px;
+	height: 150px;
 	font-weight: bold;
 	font-size: 2em;
-  border-radius: 50px;
-  -webkit-border-radius: 50px;
-  -moz-border-radius: 50px;
-  -o-border-radius: 50px;
+  border-radius: 75px;
+  -webkit-border-radius: 75px;
+  -moz-border-radius: 75px;
+  -o-border-radius: 75px;
 }
 
 button.oval {
   display: block;
+  background-color: darken($pink, $darker);
   margin: 10px auto;
   width: 200px;
   height: 100px;
@@ -242,6 +250,8 @@ button.oval {
   -moz-border-radius: 15px;
   -o-border-radius: 15px;
 }
+
+button:disabled {background-color: lighten($pink, $darker);}
 
 
 .slot {

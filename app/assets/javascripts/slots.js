@@ -30,7 +30,7 @@ function Bone(boneId) {
 	this.boneId = boneId;
 	this.context = { bone_id: this.boneId };
 	this.html    = bone_template(this.context);
-	this.boneBank = $('.bone_drop'); // TODO: move after doc loads
+	this.boneBank = $('.bone_drop.bowl'); // TODO: move after doc loads
 }
 
 Bone.prototype = {
@@ -388,9 +388,6 @@ Slot.prototype = {
   },
 
   addBones: function(bones) {
-  	for ( var i=0; i<this.bones.length; i++ ) {
-  		this.removeBone();
-  	}
   	for ( var j=0; j<bones; j++ ) {
   		this.addBone();
   	}

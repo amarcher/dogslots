@@ -4,10 +4,10 @@ var debugIndex = 0;
 NumberOfImages = 13;
 ImageWidth = 432;
 StartBones = 5;
-Rotations = 6;
+Rotations = 4;
 InitialSpinDuration = 400;
-MidSpinDuration = 5200;
-EndSpinDuration = 1000;
+MidSpinDuration = 13600;
+EndSpinDuration = 1800;
 TopOffset = 200;
 SpinDuration = 3200;
 
@@ -102,7 +102,7 @@ Reel.prototype = {
 	initialSpin: function() {
 		// Rotate one full time around
 		var that = this;
-		var bgX = -(this.goLeft * (NumberOfImages + Math.random() * NumberOfImages - Math.floor(NumberOfImages / 2)) * ImageWidth - this._bg[0]);
+		var bgX = this._bg[0] - (this.goLeft * (Math.random() * NumberOfImages % 2) * ImageWidth );
 
 		this.spinning = true;
 		this.el.delay(!this.top * TopOffset).animate(

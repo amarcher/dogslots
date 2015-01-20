@@ -158,7 +158,7 @@ body {
 }
 
 .bone_drop {
-  width: 300px;
+  width: 280px;
   padding: 20px 30px; 
 }
 
@@ -173,6 +173,12 @@ body {
     background-repeat: no-repeat;
     margin: 200px auto 10px;
   }
+  .incoming {
+    position: absolute;
+    z-index: -1;
+    width: 280px;
+    height: 700px;
+  }
 }
 
 .dogname {
@@ -185,9 +191,10 @@ body {
 }
 
 .bone {
-  width: 66px;
-  position: relative;
-  float: left;
+  width: 98px;
+  position: absolute;
+  top: 800px;
+  left: 90px;
 }
 
 .win_count, .bone_count, .dogname {

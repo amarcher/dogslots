@@ -30,7 +30,7 @@ function Bone(boneId) {
 	this.boneId = boneId;
 	this.context = { bone_id: this.boneId };
 	this.html    = bone_template(this.context);
-	this.boneBank = $('.bone_drop.bowl'); // TODO: move after doc loads
+	this.boneBank = $('.incoming'); // TODO: move after doc loads
 }
 
 Bone.prototype = {
@@ -38,15 +38,15 @@ Bone.prototype = {
 	add: function() {
 		this.boneBank.prepend( this.html );
 		this.el = $('#bone_' + this.boneId);
-		this.el.css({ 'top': '-70vh' }).animate({ 
-      top: "+=100vh",
-      rotateZ: "+=1080"
-    }, 500 );
+		this.el.css({ top: '-200px' }).animate({ 
+      top: "+=600px",
+    },
+    750);
 	},
 
 	remove: function() {
 		this.el.animate({ 
-      top: "+=100vh",
+      top: "+=800px",
     }, 500 ).hide(1000);
 	}
 };
@@ -298,10 +298,7 @@ Slot.prototype = {
 	 		this.playVideo(1);
 	 	}
  		
- 		var payout = this.payout();
- 		for (var i=0; i<payout; i++) {
- 			this.addBone();
-	 	}
+ 		this.addBones(this.payout());
 
 	 	this.playSound('success');
  	},
@@ -378,18 +375,28 @@ Slot.prototype = {
   	this.control.prop("disabled", false);
   },
 
-  addBone: function() {
+  addBone: function(delay) {
+  	var that = this;
   	var bone = new Bone( this.nextBoneId );
-		this.bones.unshift( bone );
- 		this.boneTally++;
-  	this.nextBoneId++;
-  	bone.add();
- 		this.boneTallyArea.text( this.boneTally );
-  },
+
+  	var updateText = function() {
+  		that.boneTallyArea.text( that.boneTally );
+  	};
+
+  	var addOne = function(delay) {
+			that.bones.unshift( bone );
+	 		that.boneTally++;
+	  	that.nextBoneId++;
+	  	bone.add();
+  	};
+
+  	setTimeout( addOne, 200*delay);
+  	setTimeout( updateText, 750 + 200*delay);
+	},
 
   addBones: function(bones) {
   	for ( var j=0; j<bones; j++ ) {
-  		this.addBone();
+  		this.addBone(j);
   	}
   },
 

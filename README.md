@@ -5,4 +5,4 @@ Collect one of each "real" dog by getting the reels of the "Dog Slots" machine t
 http://k9ga.me
 
 ## Technologies
-Dog Slots is designed as a single-page app. It's written mostly in MVC JavaScript and makes heavy use of features from jQuery, HTML5 and CSS3 to provide entertaining gameplay.
+Dog Slots is designed as a single-page app. It uses minimal Ruby / Rails framework, but most of the functionality is coded in MVC JavaScript. The app makes heavy use of features from jQuery, HTML5 and CSS3 to provide entertaining gameplay.

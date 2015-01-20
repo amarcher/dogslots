@@ -16,7 +16,7 @@ ion.sound({
     {name: "dog bark"},
     {name: "register"},
     {name: "success"},
-    {name: "coin in slot"},
+    {name: "coin"},
     {name: "game start"},
     {name: "tap"}
   ],
@@ -235,7 +235,7 @@ Slot.prototype = {
 	start: function() {
 		var that = this, bgX, bgY, rotation;
 		this.stopVideo();
-		this.playSound('coin in slot');
+		this.playSound('coin');
 		this.removeBone();
 		this.disableControls();
 		this.clearDogName();
@@ -287,7 +287,6 @@ Slot.prototype = {
 	 		var match = this.positions[0];
 	 		if (this.trophies.indexOf(match) === -1) {
 	 			this.trophies.push(match);
-	 			console.log($('.trophy[data-id="'+match+'"]'));
 	 			$('.trophy[data-id="'+match+'"]').css({
 			     '-webkit-transform' : 'rotateY(-3240deg)',
 			     '-moz-transform' : 'rotateY(-3240deg)',  

@@ -61,12 +61,6 @@ footer {
   font-size: 2.2em;
 }
 
-.text_title {
-  background-image: url(image-path('Lucky_Dog_Logo.png'));
-  background-repeat: no-repeat;
-  width: 160px;
-}
-
 body {
   margin: 0px;
   background-image: url(image-path('DOT_TILE_PATTERN-01.gif'));
@@ -75,7 +69,7 @@ body {
 
 #overlay {
   width: 100%;
-  height: 100vh;
+  height: 800px;
   background-color: black;
   opacity: .3;
   z-index: 999;
@@ -95,6 +89,22 @@ body {
   h1, h2 {
     text-align: center;
   }
+}
+
+.dogname {
+  .wild {
+    color: rgb(190, 165, 65);
+  }
+  .match {
+    color: #13A589;
+  }
+}
+
+
+.text_title {
+  background-image: url(image-path('Lucky_Dog_Logo.png'));
+  background-repeat: no-repeat;
+  width: 160px;
 }
 
 .zone {
@@ -184,15 +194,6 @@ body {
     z-index: -1;
     width: 280px;
     height: 700px;
-  }
-}
-
-.dogname {
-  .wild {
-    color: rgb(190, 165, 65);
-  }
-  .match {
-    color: #13A589;
   }
 }
 
@@ -310,4 +311,38 @@ video {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -o-border-radius: 10px;
+}
+
+@media only screen and (max-width: 1200px) {
+
+  .zone {
+    height: 800px;
+  }
+  .trophies {
+    width: 340px;
+    .trophy {
+      float: right;
+    }
+  }
+
+  .bone_drop {
+  .bowl {
+    position: block;
+    width: 240px;
+    height: 140px;
+    background-size: 240px 140px;
+    z-index: 100;
+    background-image: url(image-path('Bowl-half_full.png'));
+    background-repeat: no-repeat;
+    margin: 40px auto 10px;
+  }
+  .incoming {
+    position: absolute;
+    z-index: -1;
+    width: 280px;
+    height: 860px;
+    bottom: 200px;
+  }
+}
+
 }

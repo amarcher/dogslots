@@ -157,8 +157,8 @@ Reel.prototype = {
 		if (DebugMode === 1) {
 			bgX = 0;
 		} else if (DebugMode === 2) {
-			bgX = Math.floor(debugIndex/2) * ImageWidth;
-			debugIndex++;
+			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
+			debugIndex--;
 		} else if (DebugMode === 3) {
 			bgX = (debugIndex % 2 === 0) ? ImageWidth : bgX;
 			debugIndex++;
@@ -295,7 +295,7 @@ Slot.prototype = {
 			          'transform' : 'rotateY(-3240deg)'
 	 			}).addClass('earned');
 	 		}
-	 		this.playVideo(1);
+	 		this.playVideo(this.positions[0]);
 	 	}
  		
  		this.addBones(this.payout());
@@ -308,7 +308,17 @@ Slot.prototype = {
   },
 
  	playVideo: function(index) {
- 		var activeVideo = this.activeVideo = $('video[data-id="' + index + '"]').show();
+ 		var videoIndex, activeVideo;
+ 		switch (index) {
+ 			case 2:
+ 				videoIndex = index;
+ 				break;
+			default:
+				videoIndex = 1;
+		}
+		
+		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').show();
+ 		console.log(activeVideo);
  		activeVideo.get(0).play();
  		activeVideo.get(0).addEventListener('ended', function() { 
  			activeVideo.hide();

@@ -1,12 +1,8 @@
 <div class='text_title zone'></div>
 <div class='slot_machine zone'>
 	<div class='display dotted-border'>
-		<div class='slot' id='slot1'>
-			<img class='dog' src='/images/SLOT_DOGS_lineup_3.jpg' />
-		</div>
-		<div class='slot' id='slot2'>
-			<img class='dog' src='/images/SLOT_DOGS_lineup_3.jpg' />
-		</div>
+		<div class='slot' id='slot1'></div>
+		<div class='slot' id='slot2'></div>
 		<div class='video hide'>
 			<video webkit-playsinline data-id='1' class='hide' width='432px' height='600px' src='./movies/Aussie_Animation.mp4' type='vide/mp4'></video>
 			<video webkit-playsinline data-id='2' class='hide' width='432px' height='600px' src='./movies/Boston_Terrier_Short_Clip_small.mp4' type='vide/mp4'>
@@ -35,7 +31,7 @@
 		<div class='trophy' data-id='<%= index %>'></div>
 	<% end%>
 </div>
-<!-- <footer>
+<footer>
 	<span class='st_twitter_large' displayText='Tweet'></span>
 	<span class='st_googleplus_large' displayText='Google+'></span>
 	<span class='st_facebook_large' displayText='Facebook'></span>
@@ -44,7 +40,7 @@
 	<span class='st_pinterest_large' displayText='Pinterest'></span>
 	<span class='st_email_large' displayText='Email'></span>
 	<span class='st_sharethis_large' displayText='ShareThis'></span>
-</footer> -->
+</footer>
 <input type='hidden' class='debug_mode' name='debug_mode' value='<%= @debug if @debug %>'/>
 
 <%= render 'bone' %>

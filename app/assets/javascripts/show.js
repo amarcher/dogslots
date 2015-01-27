@@ -1,45 +1,51 @@
-$(document).ready(function() {
+function Reel3D(slotId, imageURL, defaultRotationSpeed) {
+	this.canvas = document.getElementById(slotId);
+	this.scene = new THREE.Scene();
+	this.camera = new THREE.PerspectiveCamera( 36, 233/144, 0.1, 5000 );
+	this.renderer = new THREE.WebGLRenderer();
+	this.geometry = new THREE.CylinderGeometry( 893, 893, 200, 200);
+	this.texture = new THREE.ImageUtils.loadTexture( imageURL );
+	this.material = new THREE.MeshBasicMaterial({
+  	map: this.texture
+	});
+	this.cylander = new THREE.Mesh( this.geometry, this.material );
+	this.spinning = false;
+	this.rotationSpeed = 0;
+	this.defaultRotationSpeed = defaultRotationSpeed;
+	this.setUpRenderer();
+}
 
-// load a texture, set wrap mode to repeat
-var texture = THREE.ImageUtils.loadTexture( "bone2.png" );
-texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set( 4, 4 );
-videoTexture = new THREE.Texture( "bone2.png" );
-videoTexture.minFilter = THREE.LinearFilter;
-videoTexture.magFilter = THREE.LinearFilter;
+Reel3D.prototype = {
+	setUpRenderer: function() {
+		this.renderer.setSize( 432, 300 );
+		this.canvas.appendChild( this.renderer.domElement );
+		this.scene.add( this.cylander );
+		this.camera.position.z = 1180;
+		this.start();
+	},
 
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 36, window.innerWidth/window.innerHeight, 0.1, 5000 );
+	render: function () {
+		requestAnimationFrame( this.render.bind(this) );
+		this.cylander.rotation.y += this.rotationSpeed;
+		this.renderer.render(this.scene, this.camera);
+	},
 
-var renderer = new THREE.WebGLRenderer();
-// renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setSize( 432, 600 );
-document.body.appendChild( renderer.domElement );
+	start: function() {
+		this.rotationSpeed = this.defaultRotationSpeed;
+		this.canvas.addEventListener("click", this.stop.bind(this));
+	},
 
-var geometry = new THREE.CylinderGeometry( 893, 893, 100, 200);
-var material = new THREE.MeshBasicMaterial({
-  map: new THREE.ImageUtils.loadTexture('images/SLOT_DOGS_lineup_3_big_top.jpg')
-});
-var material2 = new THREE.MeshBasicMaterial({
-  map: new THREE.ImageUtils.loadTexture('images/SLOT_DOGS_lineup_3_big_bottom.jpg')
-});
-var cylander = new THREE.Mesh( geometry, material );
-var cylander2 = new THREE.Mesh( geometry, material2 );
-cylander2.position.set(0,-50,0);
-cylander.position.set(0,50,0);
-scene.add( cylander );
-scene.add( cylander2 );
+	stop: function() {
+		this.rotationSpeed = 0;
+		this.canvas.removeEventListener("click");
+		this.canvas.addEventListener("click", this.start.bind(this));
+	}
 
-camera.position.z = 1180;
-
-var render = function () {
-	requestAnimationFrame( render );
-	cylander.rotation.y += 0.016;
-	cylander2.rotation.y += 0.012;
-	renderer.render(scene, camera);
 };
 
-render();
-
+$(document).ready(function() {
+	topReel = new Reel3D('slot1', 'images/SLOT_DOGS_lineup_3_big_top.jpg', 0.017);
+	bottomReel = new Reel3D('slot2', 'images/SLOT_DOGS_lineup_3_big_bottom.jpg', 0.010);
+	topReel.render();
+	bottomReel.render();
 });

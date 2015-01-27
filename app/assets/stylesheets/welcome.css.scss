@@ -271,30 +271,19 @@ button:disabled {background-color: lighten($pink, $darker);}
 .slot {
 	margin: 0px auto;
   overflow: hidden !important;
-  background-repeat: repeat-x;
 	width: 432px;
 	height: 300px;
   position: relative;
-  .dog {
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-  }
 }
 
 #slot1 {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  .dog {
-    @include transform(translate3d(0, 0, 0));
-  }
 }
 
 #slot2 {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  .dog {
-    @include transform(translate3d(0, -300px, 0));
-  }
 }
 
 .video {

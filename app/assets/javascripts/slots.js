@@ -18,7 +18,8 @@ ion.sound({
     {name: "success"},
     {name: "coin"},
     {name: "game start"},
-    {name: "tap"}
+    {name: "tap"},
+  	{name: "FAIL"}
   ],
   volume: 1,
   path: "sounds/",
@@ -309,12 +310,10 @@ Slot.prototype = {
 
  	playVideo: function(index) {
  		var videoIndex, activeVideo;
- 		switch (index) {
- 			case 2:
- 				videoIndex = index;
- 				break;
-			default:
-				videoIndex = 1;
+ 		if (index > 0 && index < 13) {
+ 			videoIndex = index;
+ 		} else {
+			videoIndex = 1;
 		}
 		
 		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').show();
@@ -370,9 +369,10 @@ Slot.prototype = {
   },
 
   gameOver: function() {
+  	this.playSound("FAIL");
 	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
 	  $(html).css("opacity","0").appendTo('body').animate(
-	  	{opacity: "0.7"},
+	  	{opacity: "1"},
 	  	1000
 	  );
   },

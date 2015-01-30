@@ -1,0 +1,51 @@
+Victor Castaño
+GVC: vcastano
+Resume
+
+Q0a: Why TPM from your current role?
+
+A0a: I’m middle man between ads review engineering and AQO (ads quality operations). I am the product specialist that does all the stuff in the middle. If there’s a tool not working properly, if we need new feature. I’m also communicating from eng to operations. That’s the kind of role I have in the team. I have some technical expertise so that’s what I’m trying to do now. My goal is to do all the roll outs in the proper way and to communicate to all the stakeholders. I have a background in CS, but never meant to be a developer, that said I love projects and building software and launching it. In my current organization, we have a lot of confusion between different parties who need to be involved in decisions. I want to be involved. 
+
+C0a: 
+
+
+Q1: What are your team’s OKR’s / annual roadmap? How do they need your help executing annual roadmap. What can you do to help? Say you have a difficult engineer who keeps speaking up in meetings expressing pessimism about the prospects of launching. What can you do about this?
+
+A1: OKR’s for AQO -- priority is meeting all the SLA’s. 90% of the ads in 24 hours. Also maintaining the quality over 98% threshold. At the same time excel the operations through automation. 95% automation rate is current automation rate, our goal is to reach 99.9%. Where I see myself in that vision is to help the team agree on a common piece of infrastructure. The problem is that if I’m in my current role I’m also going to have to do some operations roles -- review some content. Don’t allow me to develop 100% as a TPM. The other important thing is the authority. I need to be a real TPM in the department and be able to insist we need these metrics. The other thing is also about priorities. I can approach a team in Dublin and say I need these priorities. The convincing power I may have at the moment is a little different than I would have if I were integrated into the team. I have two years of experience and accumulated knowledge both technically.
+
+
+Q: How do you resolve a disagreement and help the team strike an accord?
+
+A: Problem that we don't have a tool to collect leads and send them to a review tool. There were five different ideas with various teams. First step is to consolidate all the ideas. This is the expectations, then what I do is to collect the metrics. This is the automation increase we'd expect. I provided them with a survey, they provided me with the data, I created a PRD, that's what's being implemented today. By talking to different stakeholders and getting their buy-in I could get them on the same stack. Most important thing is to set expectations and manage them. 
+
+Q: What if you had a stakeholder that was attached to a feature that you couldn't include?
+
+A: This has happened, first I needed to identify why it's a priority and why it can't be developed. First I will sit with that person and understand why it's a priority: will you have more automation, more quality. I will prototype a version that has that for v2. It's not necessarily about excluding people, it's about including them and setting expectations. What you have to do is talk to people and come up with a plan with metrics and numbers.
+
+
+Q2: Say I’m a very new Program Manager working with you on PQO. Give me a crash course in what I need to do to manage a project and succeed at it.
+ 
+A3: Training is the key here. They will have to ramp up on the knowledge of projects that I've started. What I'd do is provide the knowledge on the product. I would give them the contacts and help them get introduced to all the stakeholder. Example is this PM that's here. Second is to train them on the work flow. These are the Gantt diagrams the tasks that are left. These are the problems and bottlenecks we're having how much time we have left and if we need more resources. Assuming this person has project management knowledge, if they're more junior I would also point them to project management courses.
+
+Q3: 
+
+
+
+Q4: Tell me about your greatest innovation at work. How did it come about? (Follow-ups: Once you identified the need/issue, how did you identify potential areas for innovation? What challenges did you face in trying to innovate in this area and how did you handle them? Did the end result turn out as expected? How so, and why or why not?)
+
+A4: Greatest inovation is called filter body -- make sure we have propper quality system in place. Everyday we have 60M ads coming into our system. If there's a keyword that flagged it could have a lot of false positives and dump a lot of ads into our review pipeline. Up until now we didn't have any system to assess the quality of the filters. I organized a hackathon and we built the tool as a Chrome extension. It was a bit hacky put reviews into a trix and had a reviewer review the quality of the keywords. Once we had the proof of concept we decided to build it into a web platform, working with dev in Hyd. Another innovation that I'm proud of in life that doesn't have to do with my time here. I started dreaming about mobile health -- how can we leverage the power of mobile devices to help improve our lives, was working at a hospital innovation unit and decided to create the first laboritory from within the hospital for mobild development, workign with the physicians and surgeons, hire some engineers to make some apps that help improve peoples' lives. I joined Google but I'm happy that I started it b/c they're 
+
+C4: 
+
+
+
+Q5: You are a project manager for the “OneGoogleBar” (the navigation bar) on top of many Google products. Your PM and UX folks have a theory that the bar could be more usable and get more clicks (e.g. instead of people typing other Google products URI’s in the URL bar) if the bar itself takes up a few more millimeters of screen real estate bigger so that icons can be more legible. They ask you for your help making a more usable bar a reality. What are you going to do?
+
+A5: Following the Marissa Meyer approach: gather all the requirements. We have the bar, want to make it bigger for the user. Functional and non-functional reqs. Understand it's good for the user. Reqs could come from the sponsor of the idea or from real users. First thing I'd launch would be to plan an experiment with the users. Keep track of the clicks that they do, how they navigate from one product to another. That's like the overall idea I'd have. I would compare that with old users and gather the results. How could I structure that: I would have any project management guideline. What is the idea of the UX/PM team and vet their design with the engineers. How difficult is this? How much effort and time would it be for our team. Once everything is clear and has been communicated, we will do the design and implementation, scrum itteration on what we're doing, start building the prototype, test implementation, start measuring how users react to the feature. Need to measure user satisfaction. Not that straightforward. Brings me to the idea: how we can develop some real-world way to collect data from this users. Can we give them PlayStore discounts. That's my vision: structure the project: gather requirements, estimate the time and effort. [What are the important metrics that make it worth doing?] I would like to automate with some JavaScript code, are they clicking on this button. Are they clicking here more often. That means it's more visible. Number of clicks. Age of the users -- are they users that have been using it for years or a new user. If there's a user that's been at Google for 8 years it's hard to change to new features. Could do a cross comparrison between. Time that they stay in the page is also important if they stay there for some period of time then it was a good thing. Mom and girlfriend for some reason they open a new tab and do a Google search to find calendar -- I'd want to monitor if calendar is opened without using toolbar. If we don't see this go down even with our change.
+
+I think this also has some implications about user trust. It could present some products that the user doesn't want. Who would not want this? If I'm on the Calendar team. It could be legal -- make our company lose some points with EU and anti-trust, wait one year. [Size is increasing...] There could be some resistance from YouTube for instance that they want to maximize. [What could you do to prepare?] Metrics! Usability and revenue. Usability is the key for all of our products. 
+
+C5: 
+
+Questions for me:
+

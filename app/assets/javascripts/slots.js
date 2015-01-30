@@ -370,9 +370,9 @@ Slot.prototype = {
 
   gameOver: function() {
   	this.playSound("FAIL");
-	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
+	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "y" : "ies" });
 	  $(html).css("opacity","0").appendTo('body').animate(
-	  	{opacity: "1"},
+	  	{opacity: ".95"},
 	  	1000
 	  );
   },
@@ -420,7 +420,7 @@ Slot.prototype = {
   endGameWithWin: function() {
   	var html = winning_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
   	$(html).css("opacity","0").appendTo('body').animate(
-  		{opacity: "0.7"},
+  		{opacity: ".95"},
   		1000
   	);
   }

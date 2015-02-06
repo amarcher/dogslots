@@ -4,7 +4,7 @@
 @import "trig";
 @import "wheel"; // Requires trig
 
-$pink: rgb(255, 211, 226);
+$pink: #FFFFFF;
 $darker: 5%;
 
 @font-face{
@@ -63,7 +63,7 @@ footer {
 
 body {
   margin: 0px;
-  background-image: url(image-path('DOT_TILE_PATTERN-01.gif'));
+  background-image: url(image-path('DOT_TILE_PATTERN-DARK_II.gif'));
   background-repeat: repeat;
 }
 
@@ -185,9 +185,17 @@ body {
     height: 140px;
     background-size: 240px 140px;
     z-index: 100;
-    background-image: url(image-path('Bowl-half_full.png'));
     background-repeat: no-repeat;
     margin: 200px auto 10px;
+  }
+  .bowl.empty {
+    background-image: url(image-path('Bowl_Empty.png'));
+  }
+  .bowl.half-full {
+    background-image: url(image-path('Bowl-half_full.png'));
+  }
+  .bowl.full {
+    background-image: url(image-path('Bowl_Full.png'));
   }
   .incoming {
     position: absolute;
@@ -207,7 +215,7 @@ body {
 .win_count, .bone_count, .dogname {
   text-align: center;
   margin: 20px auto 0px;
-  background-color: rgb(255, 211, 226);
+  background-color: $pink;
   width: 100%;
   border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -332,7 +340,6 @@ video {
     height: 140px;
     background-size: 240px 140px;
     z-index: 100;
-    background-image: url(image-path('Bowl-half_full.png'));
     background-repeat: no-repeat;
     margin: 40px auto 10px;
   }

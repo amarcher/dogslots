@@ -199,6 +199,7 @@ function Slot(els, boneEl, controlEl, nameEl ) {
 	this.goLeft = 1;
 	this.trophies = [];
 	this.spinningReels = 0;
+	this.bowl = $('.bowl');
 	this.setUpGame();
 }
 
@@ -214,6 +215,8 @@ Slot.prototype = {
 		});
 
 		this.clearDogName();
+
+		console.log(this.bowl);
 
 		// event handlers for end-game
 		$(document).on('click', '#start_over', function(event){
@@ -389,8 +392,9 @@ Slot.prototype = {
   	var that = this;
   	var bone = new Bone( this.nextBoneId );
 
-  	var updateText = function() {
+  	var updateBoneTally = function() {
   		that.boneTallyArea.text( that.boneTally );
+  		that.setBowlImage();
   	};
 
   	var addOne = function(delay) {
@@ -401,7 +405,7 @@ Slot.prototype = {
   	};
 
   	setTimeout( addOne, 200*delay);
-  	setTimeout( updateText, 750 + 200*delay);
+  	setTimeout( updateBoneTally, 750 + 200*delay);
 	},
 
   addBones: function(bones) {
@@ -410,11 +414,33 @@ Slot.prototype = {
   	}
   },
 
+  setBowlImage: function() {
+  	var bones = this.boneTally;
+  	switch(true) {
+  		case (bones > 10):
+  			this.bowl.addClass('full');
+  			this.bowl.removeClass('half-full');
+  			this.bowl.removeClass('empty');
+  			break;
+  		case (bones < 1):
+  			this.bowl.removeClass('full');
+  			this.bowl.removeClass('half-full');
+  			this.bowl.addClass('empty');
+  			break;
+  		default:
+	  		this.bowl.removeClass('full');
+	  		this.bowl.addClass('half-full');
+	  		this.bowl.removeClass('empty');
+	  		break;
+  	}
+  },
+
   removeBone: function() {
   	var bone = this.bones.pop();
   	bone.remove();
   	this.boneTally--;
   	this.boneTallyArea.text( this.boneTally );
+  	this.setBowlImage();
   },
 
   endGameWithWin: function() {

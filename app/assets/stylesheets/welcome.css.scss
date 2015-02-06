@@ -14,7 +14,7 @@ $darker: 5%;
 
 @font-face{
   font-family: "Moonshiner-Round";
-  src: url('Moonshiner-Round.otf');
+  src: font-url('Moonshiner-Round.otf');
 }
 
 @mixin transform($value) {

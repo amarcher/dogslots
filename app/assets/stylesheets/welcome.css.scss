@@ -17,6 +17,11 @@ $darker: 5%;
   src: font-url('Moonshiner-Round.otf');
 }
 
+@font-face{
+  font-family: "BD_Cartoon_Shout";
+  src: font-url('BD_Cartoon_Shout.ttf') format('truetype');
+}
+
 @mixin transform($value) {
   -webkit-transform: $value;
      -moz-transform: $value;
@@ -75,20 +80,43 @@ body {
   z-index: 999;
 }
 
-#modal {
-  font-family: "Moonshiner-Round";
+.modal {
+  @include border-radius(4px);
+  font-family: "BD_Cartoon_Shout";
   position: absolute;
   height: 600px;
   top: 50px;
   width: 80%;
   left: 10%;
-  border-radius: 15px;
   z-index: 1000;
-  background-color: gray;
-  border: 5px solid black;
+  text-align: center;
   h1, h2 {
     text-align: center;
   }
+}
+
+#winning-modal {
+  background: rgba(255,255,255,1);
+  background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,1)), color-stop(47%, rgba(246,246,246,0.67)), color-stop(100%, rgba(237,237,237,0.3)));
+  background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -o-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed', GradientType=1 );
+  border: 5px solid rgb(237,237,237);
+}
+
+#losing-modal {
+  background: rgba(255,255,255,1);
+  background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,1)), color-stop(47%, rgba(246,246,246,0.67)), color-stop(100%, rgba(237,237,237,0.3)));
+  background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -o-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(246,246,246,0.67) 47%, rgba(237,237,237,0.3) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed', GradientType=1 );
+  border: 5px solid rgb(237,237,237);
 }
 
 .dogname {
@@ -213,14 +241,11 @@ body {
 }
 
 .win_count, .bone_count, .dogname {
+  @include border-radius(4px);
   text-align: center;
   margin: 20px auto 0px;
   background-color: $pink;
   width: 100%;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -o-border-radius: 10px;
   height: 60px;
   line-height: 60px;
 }
@@ -246,6 +271,7 @@ body {
 button:focus {outline:0;}
 
 button.circle {
+  @include border-radius(75px);
   background-color: darken($pink, $darker);
 	display: block;
 	margin: 10px auto;
@@ -253,24 +279,18 @@ button.circle {
 	height: 150px;
 	font-weight: bold;
 	font-size: 2em;
-  border-radius: 75px;
-  -webkit-border-radius: 75px;
-  -moz-border-radius: 75px;
-  -o-border-radius: 75px;
 }
 
 button.oval {
-  display: block;
-  background-color: darken($pink, $darker);
+  @include border-radius(4px);
+  display: inline-block;
   margin: 10px auto;
   width: 200px;
-  height: 100px;
+  height: 200px;
   font-weight: bold;
   font-size: 2em;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -o-border-radius: 15px;
+  background: rgba(255,255,255,0);
+  border: 0px;
 }
 
 button:disabled {background-color: lighten($pink, $darker);}
@@ -311,14 +331,27 @@ button:disabled {background-color: lighten($pink, $darker);}
 }
 
 video {
+  @include border-radius(10px);
   display:table-cell;
   vertical-align:middle;
   position: relative;
   margin: 0px auto;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -o-border-radius: 10px;
+}
+
+.sadface, .paw {
+  position: static;
+  width: 100%;
+  height: 150px;
+  text-align: center;
+  img {
+    width: 150px;
+    height: 150px;
+    margin: 0px auto;
+  }
+  span {
+    width: 150px;
+    height: 50px;
+  }
 }
 
 @media only screen and (max-width: 1200px) {

@@ -3,7 +3,7 @@ DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
 var debugIndex = 0;
 NumberOfImages = 13;
 ImageWidth = 432;
-StartBones = 5;
+StartBones = 1;
 Rotations = 4;
 InitialSpinDuration = 400;
 MidSpinDuration = 13600;
@@ -224,7 +224,7 @@ Slot.prototype = {
 	  	console.log('starting over');
 	  	that.restart();
 	  	that.playSound('game start');
-	  	$('#overlay, #modal').remove();
+	  	$('#overlay, .modal').remove();
 	  });
 	  $(document).on('click', '#get_more_bones', function(event){ 
 	  	event.stopPropagation();
@@ -232,7 +232,7 @@ Slot.prototype = {
 	  	that.addBones(StartBones);
 	  	that.enableControls();
 	  	that.playSound('register');
-	  	$('#overlay, #modal').remove();
+	  	$('#overlay, .modal').remove();
 	  });
 	},
 

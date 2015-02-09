@@ -29,6 +29,14 @@ $darker: 5%;
           transform: $value;
 }
 
+@mixin transition_transform($value) {
+  -webkit-transition: -webkit-transform $value;
+     -moz-transition: -moz-transform $value;
+      -ms-transition: -ms-transform $value;
+        -o-transform: -o-transform $value;
+          transition: transform $value;
+}
+
 @mixin border-radius($value) {
   -webkit-border-radius: $value;
      -moz-border-radius: $value;
@@ -141,8 +149,7 @@ body {
   margin: 10px 0px 0px;
 }
 
-.trophies {
-  width: 160px;
+.trophies, .trophycase {
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
   -o-perspective: 1000px;
@@ -150,28 +157,68 @@ body {
   perspective: 1000px;
   .trophy {
     @include border-radius(5px);
+    @include transition_transform(9s linear);
     margin: 2px;
-    float: left;
     width: 72px;
     height: 100px;
     background-image: url(image-path('SmallLineup.png'));
     background-repeat: no-repeat;
     -webkit-transform-style: preserve-3d;
-    -webkit-transition: -webkit-transform 9s linear;
     -moz-transform-style: preserve-3d;
-    -moz-transition: -moz-transform 9s linear;
-    -o-transform-style: preserve-3d;
-    -o-transition: -o-transform 9s linear;
-    transform-style: preserve-3d;
-    transition: transform 9s linear;
     -ms-transform-style: preserve-3d;
-    -ms-transition: -ms-transform 9s linear;
+    -o-transform-style: preserve-3d;
+    transform-style: preserve-3d;
   }
   @for $i from 0 through 13 {
     .trophy:nth-child( #{$i + 1} ) {
       background-position: -#{$i * 72}px 0px; }
     .earned:nth-child( #{$i + 1} ) {
       background-position: -#{$i * 72}px -100px; }
+  }
+}
+
+.trophies {
+  width: 160px;
+  .trophy {
+    float: left;
+  }
+}
+
+.trophycase {
+  text-align: center;
+  width: 100%;
+  height: 200px;
+  .trophy{
+    display: inline-block;
+    -webkit-animation-name: spinner;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 2s;
+
+    animation-name: spinner;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+  }
+}
+
+/* WebKit and Opera browsers */
+@-webkit-keyframes spinner {
+  from { -webkit-transform: rotateY(0deg);    }
+  to   { -webkit-transform: rotateY(-360deg); }
+}
+
+/* all other browsers */
+@keyframes spinner {
+  from {
+    -moz-transform: rotateY(0deg);
+    -ms-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -moz-transform: rotateY(-360deg);
+    -ms-transform: rotateY(-360deg);
+    transform: rotateY(-360deg);
   }
 }
 
@@ -352,6 +399,10 @@ video {
     width: 150px;
     height: 50px;
   }
+}
+
+.block {
+  display: block;
 }
 
 @media only screen and (max-width: 1200px) {

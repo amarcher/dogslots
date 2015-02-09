@@ -3,6 +3,18 @@
 	</div>
 	<div class='modal win' id='winning-modal'>
 		<H1>AMAZING! You collected all {{ toys }} trophies.</H1>
-		<button class="oval hvr-glow" id='start_over'>Start over</button>
+		<div class='trophycase'>
+			<% (1..12).each do |index| %>
+				<div class='trophy earned' data-id='<%= index %>'></div>
+			<% end%>
+		</div>
+		<div class='block'>
+			<button class="oval hvr-glow pawprintbutton" id='start_over'>
+				<div class='paw'>
+					<img src="images/Paw_Print_White.png" />
+				</div>
+				<span>Start over</span>
+			</button>
+		</div>
 	</div>
 </script>

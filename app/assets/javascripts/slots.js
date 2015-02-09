@@ -2,6 +2,7 @@
 DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
 var debugIndex = 0;
 NumberOfImages = 13;
+PurebredCount = NumberOfImages - 1;
 ImageWidth = 432;
 StartBones = 1;
 Rotations = 4;
@@ -157,7 +158,7 @@ Reel.prototype = {
 
 		if (DebugMode === 1) {
 			bgX = 0;
-		} else if (DebugMode === 2) {
+		} else if (DebugMode === 2 || DebugMode === 4) {
 			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
 			debugIndex--;
 		} else if (DebugMode === 3) {
@@ -216,7 +217,14 @@ Slot.prototype = {
 
 		this.clearDogName();
 
-		console.log(this.bowl);
+		if (DebugMode === 4) {
+			for (var i=1; i<=PurebredCount; i++){
+				if (i != 2) {
+					this.positions = [i,i];
+					this.win();
+				}
+			}
+		}
 
 		// event handlers for end-game
 		$(document).on('click', '#start_over', function(event){
@@ -271,8 +279,7 @@ Slot.prototype = {
 				this.enableControls();
 			}
 
-			if (this.trophies.length == NumberOfImages) {
-				console.log('over!');
+			if (this.trophies.length == PurebredCount) {
 				setTimeout(function() { that.endGameWithWin(); }, 9000);
 			}
 		}
@@ -299,7 +306,9 @@ Slot.prototype = {
 			          'transform' : 'rotateY(-3240deg)'
 	 			}).addClass('earned');
 	 		}
-	 		this.playVideo(this.positions[0]);
+	 		if (DebugMode != 4 || this.positions[0] == 2) {
+	 			this.playVideo(this.positions[0]);
+	 		}
 	 	}
  		
  		this.addBones(this.payout());
@@ -320,7 +329,6 @@ Slot.prototype = {
 		}
 		
 		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').show();
- 		console.log(activeVideo);
  		activeVideo.get(0).play();
  		activeVideo.get(0).addEventListener('ended', function() { 
  			activeVideo.hide();
@@ -337,12 +345,12 @@ Slot.prototype = {
  	},
 
  	trueMatch: function() {
- 		return this.positions[0] === this.positions[1];
+ 		return this.positions[0] === this.positions[1] && this.positions[0] !== NumberOfImages;
  	},
 
   payout: function() {
   	// double wolf is a mega win 
-  	if (this.positions[0] === 13 && this.positions[1] === 13) {
+  	if (this.positions[0] === NumberOfImages && this.positions[1] === NumberOfImages) {
   		return 25;
   	} else {
 	  	return 5;

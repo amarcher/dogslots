@@ -2,18 +2,18 @@
 	<div id='overlay'>
 	</div>
 	<div class='modal win' id='winning-modal'>
-		<H1>AMAZING! You collected all {{ toys }} trophies.</H1>
+		<H1>AMAZING! YOU COLLECTED ALL {{ toys }} TROPHIES!</H1>
 		<div class='trophycase'>
 			<% (1..12).each do |index| %>
 				<div class='trophy earned' data-id='<%= index %>'></div>
 			<% end%>
 		</div>
 		<div class='block'>
-			<button class="oval hvr-glow pawprintbutton" id='start_over'>
+			<button class="oval opaquen pawprintbutton" id='start_over'>
 				<div class='paw'>
 					<img src="images/Paw_Print_White.png" />
 				</div>
-				<span>Start over</span>
+				<span>START OVER</span>
 			</button>
 		</div>
 	</div>

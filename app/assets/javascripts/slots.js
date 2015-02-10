@@ -395,7 +395,7 @@ Slot.prototype = {
   			trophies[i] = '';
   		}
   	}
-	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "y" : "ies" });
+	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "Y" : "IES" });
 	  $(html).css("opacity","0").appendTo('body').animate(
 	  	{opacity: ".95"},
 	  	1000

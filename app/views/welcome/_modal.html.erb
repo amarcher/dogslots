@@ -3,8 +3,10 @@
 	</div>
 	<div id='losing-modal' class='modal loss'>
 		<H1>Woof... You are out of bones!</H1>
-		<div class='sadface'>
-			<img src="images/SF_White.png" />
+		<div class='trophycase'>
+		{{#each trophies}}
+			<div class='trophy {{this}}'></div>
+		{{/each}}
 		</div>
 		<H2>You collected {{ toys }} troph{{ plural }}.</H2>
 		<H2>Would you to start over or get more bones and keep playing?</H2>

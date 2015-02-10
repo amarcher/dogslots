@@ -1,5 +1,5 @@
 // Constants
-DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
+DebugModes = ["Off","First","AdvanceToWin","WinWithWild", "One from win"];
 var debugIndex = 0;
 NumberOfImages = 13;
 PurebredCount = NumberOfImages - 1;
@@ -217,7 +217,7 @@ Slot.prototype = {
 
 		this.clearDogName();
 
-		if (DebugMode === 4) {
+		if (DebugMode === 4 || DebugMode === 5) {
 			for (var i=1; i<=PurebredCount; i++){
 				if (i != 2) {
 					this.positions = [i,i];
@@ -306,8 +306,14 @@ Slot.prototype = {
 			          'transform' : 'rotateY(-3240deg)'
 	 			}).addClass('earned');
 	 		}
-	 		if (DebugMode != 4 || this.positions[0] == 2) {
+
+	 		if (DebugMode != 4 || DebugMode != 5 || this.positions[0] === 2) {
 	 			this.playVideo(this.positions[0]);
+	 		}
+	 		if (DebugMode === 5) {
+	 			for(var i=0; i < this.boneTally-1; i++) {
+	 				this.removeBone();
+	 			}
 	 		}
 	 	}
  		
@@ -353,7 +359,7 @@ Slot.prototype = {
   	if (this.positions[0] === NumberOfImages && this.positions[1] === NumberOfImages) {
   		return 25;
   	} else {
-	  	return 5;
+	  	return 1;
 	  }
   },
 
@@ -380,8 +386,16 @@ Slot.prototype = {
   },
 
   gameOver: function() {
+  	var trophies = [];
   	this.playSound("FAIL");
-	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "y" : "ies" });
+  	for (var i=1; i<PurebredCount; i++) {
+  		if (this.trophies.indexOf(i+1) > -1) {
+  			trophies[i] = 'earned';
+  		} else {
+  			trophies[i] = '';
+  		}
+  	}
+	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "y" : "ies" });
 	  $(html).css("opacity","0").appendTo('body').animate(
 	  	{opacity: ".95"},
 	  	1000

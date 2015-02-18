@@ -77,7 +77,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Workaround for heroku not serving static assets
-  config.serve_static_assets = true
+  config.serve_static_assets = false
   config.static_cache_control = "public, max-age=2592000"
   config.assets.digest = true
   config.action_controller.perform_caching = true

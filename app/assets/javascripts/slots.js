@@ -475,8 +475,13 @@ Slot.prototype = {
 
   endGameWithWin: function() {
   	var html = winning_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
-  	$(html).css("opacity","0").appendTo('body').animate(
-  		{opacity: ".95"},
+  	$(html).css("opacity","0").appendTo('body');
+  	$('#overlay').animate(
+  		{opacity: ".8"},
+  		1000
+  	);
+  	$('.modal').animate(
+  		{opacity: "1"},
   		1000
   	);
   }

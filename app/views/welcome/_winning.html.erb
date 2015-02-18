@@ -1,8 +1,20 @@
 <script id="winning-template" type="text/x-handlebars-template">
 	<div id='overlay'>
 	</div>
-	<div id='modal'>
-		<H1>AMAZING! You collected all {{ toys }} trophies.</H1>
-		<button class="oval hvr-glow" id='start_over'>Start over</button>
+	<div class='modal win' id='winning-modal'>
+		<H1>AMAZING! YOU COLLECTED ALL {{ toys }} TROPHIES!</H1>
+		<div class='trophycase'>
+			<% (1..12).each do |index| %>
+				<div class='trophy earned' data-id='<%= index %>'></div>
+			<% end%>
+		</div>
+		<div class='block'>
+			<button class="oval pawprintbutton" id='start_over'>
+				<div class='paw opaquen'>
+					<img src="images/Paw_Print_White.png" />
+				</div>
+				<span>START OVER</span>
+			</button>
+		</div>
 	</div>
 </script>

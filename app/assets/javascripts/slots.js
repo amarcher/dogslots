@@ -1,9 +1,10 @@
 // Constants
-DebugModes = ["Off","First","AdvanceToWin","WinWithWild"];
+DebugModes = ["Off","First","AdvanceToWin","WinWithWild", "One from win"];
 var debugIndex = 0;
 NumberOfImages = 13;
+PurebredCount = NumberOfImages - 1;
 ImageWidth = 432;
-StartBones = 5;
+StartBones = 3;
 Rotations = 4;
 InitialSpinDuration = 400;
 MidSpinDuration = 13600;
@@ -156,8 +157,11 @@ Reel.prototype = {
 		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
 
 		if (DebugMode === 1) {
-			bgX = 0;
-		} else if (DebugMode === 2) {
+			if (debugIndex < 2) {
+				bgX = 0;
+				debugIndex++;
+			}
+		} else if (DebugMode === 2 || DebugMode === 4) {
 			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
 			debugIndex--;
 		} else if (DebugMode === 3) {
@@ -216,7 +220,14 @@ Slot.prototype = {
 
 		this.clearDogName();
 
-		console.log(this.bowl);
+		if (DebugMode === 4 || DebugMode === 5) {
+			for (var i=1; i<=PurebredCount; i++){
+				if (i != 2) {
+					this.positions = [i,i];
+					this.win();
+				}
+			}
+		}
 
 		// event handlers for end-game
 		$(document).on('click', '#start_over', function(event){
@@ -224,7 +235,7 @@ Slot.prototype = {
 	  	console.log('starting over');
 	  	that.restart();
 	  	that.playSound('game start');
-	  	$('#overlay, #modal').remove();
+	  	$('#overlay, .modal').remove();
 	  });
 	  $(document).on('click', '#get_more_bones', function(event){ 
 	  	event.stopPropagation();
@@ -232,7 +243,7 @@ Slot.prototype = {
 	  	that.addBones(StartBones);
 	  	that.enableControls();
 	  	that.playSound('register');
-	  	$('#overlay, #modal').remove();
+	  	$('#overlay, .modal').remove();
 	  });
 	},
 
@@ -271,8 +282,7 @@ Slot.prototype = {
 				this.enableControls();
 			}
 
-			if (this.trophies.length == NumberOfImages) {
-				console.log('over!');
+			if (this.trophies.length == PurebredCount) {
 				setTimeout(function() { that.endGameWithWin(); }, 9000);
 			}
 		}
@@ -299,7 +309,15 @@ Slot.prototype = {
 			          'transform' : 'rotateY(-3240deg)'
 	 			}).addClass('earned');
 	 		}
-	 		this.playVideo(this.positions[0]);
+
+	 		if ( (DebugMode != 4 && DebugMode != 5) || this.positions[0] === 2) {
+	 			this.playVideo(this.positions[0]);
+	 		}
+	 		if (DebugMode === 5) {
+	 			for(var i=0; i < this.boneTally-1; i++) {
+	 				this.removeBone();
+	 			}
+	 		}
 	 	}
  		
  		this.addBones(this.payout());
@@ -320,7 +338,6 @@ Slot.prototype = {
 		}
 		
 		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').show();
- 		console.log(activeVideo);
  		activeVideo.get(0).play();
  		activeVideo.get(0).addEventListener('ended', function() { 
  			activeVideo.hide();
@@ -337,15 +354,15 @@ Slot.prototype = {
  	},
 
  	trueMatch: function() {
- 		return this.positions[0] === this.positions[1];
+ 		return this.positions[0] === this.positions[1] && this.positions[0] !== NumberOfImages;
  	},
 
   payout: function() {
   	// double wolf is a mega win 
-  	if (this.positions[0] === 13 && this.positions[1] === 13) {
+  	if (this.positions[0] === NumberOfImages && this.positions[1] === NumberOfImages) {
   		return 25;
   	} else {
-	  	return 5;
+	  	return 3;
 	  }
   },
 
@@ -372,10 +389,23 @@ Slot.prototype = {
   },
 
   gameOver: function() {
+  	var trophies = [];
   	this.playSound("FAIL");
-	  var html = modal_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "y" : "ies" });
-	  $(html).css("opacity","0").appendTo('body').animate(
-	  	{opacity: ".95"},
+  	for (var i=1; i<PurebredCount; i++) {
+  		if (this.trophies.indexOf(i+1) > -1) {
+  			trophies[i] = 'earned';
+  		} else {
+  			trophies[i] = '';
+  		}
+  	}
+	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "Y" : "IES" });
+	  $(html).css("opacity","0").appendTo('body');
+	  $('#overlay').animate(
+	  	{opacity: ".8"},
+	  	1000
+	  );
+	  $('.modal').animate(
+	  	{opacity: "1"},
 	  	1000
 	  );
   },

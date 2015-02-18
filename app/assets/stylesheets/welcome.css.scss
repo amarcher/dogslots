@@ -17,11 +17,24 @@ $darker: 5%;
   src: font-url('Moonshiner-Round.otf');
 }
 
+@font-face{
+  font-family: "BD_Cartoon_Shout";
+  src: font-url('BD_Cartoon_Shout.ttf') format('truetype');
+}
+
 @mixin transform($value) {
   -webkit-transform: $value;
      -moz-transform: $value;
       -ms-transform: $value;
           transform: $value;
+}
+
+@mixin transition_transform($value) {
+  -webkit-transition: -webkit-transform $value;
+     -moz-transition: -moz-transform $value;
+      -ms-transition: -ms-transform $value;
+        -o-transform: -o-transform $value;
+          transition: transform $value;
 }
 
 @mixin border-radius($value) {
@@ -69,26 +82,40 @@ body {
 
 #overlay {
   width: 100%;
-  height: 800px;
+  height: 1000px;
   background-color: black;
   opacity: .3;
   z-index: 999;
+  // workaround for http://stackoverflow.com/questions/6953497/webkit-transform-overwrites-z-index-ordering-in-chrome-13
+  transform: translate3d(0px, 0px, 0px);
+  -webkit-transform: translate3d(0px, 0px, 0px);
 }
 
-#modal {
-  font-family: "Moonshiner-Round";
+.modal {
+  @include border-radius(4px);
+  font-family: "BD_Cartoon_Shout";
   position: absolute;
-  height: 600px;
+  height: 660px;
   top: 50px;
   width: 80%;
   left: 10%;
-  border-radius: 15px;
   z-index: 1000;
-  background-color: gray;
-  border: 5px solid black;
+  text-align: center;
   h1, h2 {
     text-align: center;
+    max-width: 800px;
+    margin: 20px auto 5px;
   }
+}
+
+#winning-modal {
+  background: rgba(255, 183, 183, 0.86);
+  border: 10px solid rgba(255, 183, 183, 0.95);
+}
+
+#losing-modal {
+  background: rgba(88, 153, 255, 0.86);
+  border: 10px solid rgba(88, 153, 255, 0.86);
 }
 
 .dogname {
@@ -113,8 +140,7 @@ body {
   margin: 10px 0px 0px;
 }
 
-.trophies {
-  width: 160px;
+.trophies, .trophycase {
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
   -o-perspective: 1000px;
@@ -122,28 +148,73 @@ body {
   perspective: 1000px;
   .trophy {
     @include border-radius(5px);
+    @include transition_transform(9s linear);
     margin: 2px;
-    float: left;
     width: 72px;
     height: 100px;
     background-image: url(image-path('SmallLineup.png'));
     background-repeat: no-repeat;
     -webkit-transform-style: preserve-3d;
-    -webkit-transition: -webkit-transform 9s linear;
     -moz-transform-style: preserve-3d;
-    -moz-transition: -moz-transform 9s linear;
-    -o-transform-style: preserve-3d;
-    -o-transition: -o-transform 9s linear;
-    transform-style: preserve-3d;
-    transition: transform 9s linear;
     -ms-transform-style: preserve-3d;
-    -ms-transition: -ms-transform 9s linear;
+    -o-transform-style: preserve-3d;
+    transform-style: preserve-3d;
   }
   @for $i from 0 through 13 {
     .trophy:nth-child( #{$i + 1} ) {
       background-position: -#{$i * 72}px 0px; }
     .earned:nth-child( #{$i + 1} ) {
       background-position: -#{$i * 72}px -100px; }
+  }
+}
+
+.trophies {
+  width: 160px;
+  .trophy {
+    float: left;
+    z-index: -1;
+  }
+}
+
+.trophycase {
+  text-align: center;
+  max-width: 550px;
+  min-height: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  .trophy{
+    display: inline-block;
+  }
+  .earned {
+    -webkit-animation-name: spinner;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 2s;
+
+    animation-name: spinner;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+  }
+}
+
+/* WebKit and Opera browsers */
+@-webkit-keyframes spinner {
+  from { -webkit-transform: rotateY(0deg);    }
+  to   { -webkit-transform: rotateY(-360deg); }
+}
+
+/* all other browsers */
+@keyframes spinner {
+  from {
+    -moz-transform: rotateY(0deg);
+    -ms-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  to {
+    -moz-transform: rotateY(-360deg);
+    -ms-transform: rotateY(-360deg);
+    transform: rotateY(-360deg);
   }
 }
 
@@ -213,14 +284,11 @@ body {
 }
 
 .win_count, .bone_count, .dogname {
+  @include border-radius(4px);
   text-align: center;
   margin: 20px auto 0px;
   background-color: $pink;
   width: 100%;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -o-border-radius: 10px;
   height: 60px;
   line-height: 60px;
 }
@@ -243,9 +311,17 @@ body {
   box-shadow: 0 0 28px rgba(0, 0, 0, 0.9);
 }
 
+.opaquen {
+  opacity: 0.5;
+}
+.opaquen:hover, .opaquen:focus, .opaquen-glow:active {
+  opacity: 1;
+}
+
 button:focus {outline:0;}
 
 button.circle {
+  @include border-radius(75px);
   background-color: darken($pink, $darker);
 	display: block;
 	margin: 10px auto;
@@ -253,24 +329,18 @@ button.circle {
 	height: 150px;
 	font-weight: bold;
 	font-size: 2em;
-  border-radius: 75px;
-  -webkit-border-radius: 75px;
-  -moz-border-radius: 75px;
-  -o-border-radius: 75px;
 }
 
 button.oval {
-  display: block;
-  background-color: darken($pink, $darker);
+  @include border-radius(4px);
+  display: inline-block;
   margin: 10px auto;
   width: 200px;
-  height: 100px;
+  min-height: 200px;
   font-weight: bold;
   font-size: 2em;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -o-border-radius: 15px;
+  background: rgba(255,255,255,0);
+  border: 0px;
 }
 
 button:disabled {background-color: lighten($pink, $darker);}
@@ -311,14 +381,37 @@ button:disabled {background-color: lighten($pink, $darker);}
 }
 
 video {
+  @include border-radius(10px);
   display:table-cell;
   vertical-align:middle;
   position: relative;
   margin: 0px auto;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -o-border-radius: 10px;
+}
+
+.paw {
+  position: static;
+  width: 100%;
+  height: 150px;
+  text-align: center;
+  img {
+    width: 150px;
+    height: 150px;
+    margin: 0px auto;
+  }
+  span {
+    width: 150px;
+    height: 50px;
+  }
+}
+
+.trophycase > img {
+  width: 150px;
+  height: 150px;
+  margin: 0px auto;
+}
+
+.block {
+  display: block;
 }
 
 @media only screen and (max-width: 1200px) {

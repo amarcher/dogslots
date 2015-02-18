@@ -4,7 +4,7 @@ var debugIndex = 0;
 NumberOfImages = 13;
 PurebredCount = NumberOfImages - 1;
 ImageWidth = 432;
-StartBones = 5;
+StartBones = 1;
 Rotations = 4;
 InitialSpinDuration = 400;
 MidSpinDuration = 13600;
@@ -399,8 +399,13 @@ Slot.prototype = {
   		}
   	}
 	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "Y" : "IES" });
-	  $(html).css("opacity","0").appendTo('body').animate(
-	  	{opacity: ".95"},
+	  $(html).css("opacity","0").appendTo('body');
+	  $('#overlay').animate(
+	  	{opacity: ".8"},
+	  	1000
+	  );
+	  $('.modal').animate(
+	  	{opacity: "1"},
 	  	1000
 	  );
   },

@@ -7,6 +7,11 @@ group :production do
   gem 'rails_12factor'
 end
 
+# Unify caching system with heroku:
+# https://devcenter.heroku.com/articles/rack-cache-memcached-rails31
+gem 'rack-cache'
+gem 'dalli'
+gem 'kgio'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.8'
 # Use postgres as the database for Active Record

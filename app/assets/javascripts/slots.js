@@ -310,7 +310,7 @@ Slot.prototype = {
 	 			}).addClass('earned');
 	 		}
 
-	 		if (DebugMode != 4 || DebugMode != 5 || this.positions[0] === 2) {
+	 		if ( (DebugMode != 4 && DebugMode != 5) || this.positions[0] === 2) {
 	 			this.playVideo(this.positions[0]);
 	 		}
 	 		if (DebugMode === 5) {

@@ -53,6 +53,30 @@ Bone.prototype = {
 	}
 };
 
+function rainBone() {
+	var boneImage, imgX, imgWidth, time, bone;
+	var screenHeight = $(document).height();
+	var startY = -0.2 * screenHeight;
+	var endY = 1.4 * screenHeight;
+	imgWidth = Math.random() * 100 + 50;
+	time = 2000;
+	imgX = Math.random() * $(document).width() - imgWidth;
+	boneImage = bone_template({bone_id: "rain"});
+	bone = $(boneImage).appendTo(document.body);
+	bone.css({
+		width: imgWidth + 'px',
+		top: startY + 'px' ,
+		left: imgX + 'px'
+	})
+	.animate({
+    top: "+=" + endY + "px",
+  },
+  {duration: time,
+  	easing: 'swing',
+  	complete: function() { this.remove(); }
+  });
+}
+
 function NameArea( node ) {
 	this.names = node.children();
 	this.activeEl = null;
@@ -312,16 +336,18 @@ Slot.prototype = {
 
 	 		if ( (DebugMode != 4 && DebugMode != 5) || this.positions[0] === 2) {
 	 			this.playVideo(this.positions[0]);
+	 			this.rainBones(200);
 	 		}
 	 		if (DebugMode === 5) {
 	 			for(var i=0; i < this.boneTally-1; i++) {
 	 				this.removeBone();
 	 			}
 	 		}
+	 	} else {
+	 		this.rainBones(200);
 	 	}
  		
  		this.addBones(this.payout());
-
 	 	this.playSound('success');
  	},
 
@@ -490,6 +516,12 @@ Slot.prototype = {
   		{opacity: "1"},
   		1000
   	);
+  },
+
+  rainBones: function(quantity) {
+  	for (var i=0; i<quantity; i++) {
+  		setTimeout(rainBone, 10*i);
+  	}
   }
 };
 

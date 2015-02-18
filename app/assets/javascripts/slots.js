@@ -4,7 +4,7 @@ var debugIndex = 0;
 NumberOfImages = 13;
 PurebredCount = NumberOfImages - 1;
 ImageWidth = 432;
-StartBones = 1;
+StartBones = 5;
 Rotations = 4;
 InitialSpinDuration = 400;
 MidSpinDuration = 13600;
@@ -362,7 +362,7 @@ Slot.prototype = {
   	if (this.positions[0] === NumberOfImages && this.positions[1] === NumberOfImages) {
   		return 25;
   	} else {
-	  	return 1;
+	  	return 3;
 	  }
   },
 

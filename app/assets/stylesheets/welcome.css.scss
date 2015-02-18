@@ -86,6 +86,9 @@ body {
   background-color: black;
   opacity: .3;
   z-index: 999;
+  // workaround for http://stackoverflow.com/questions/6953497/webkit-transform-overwrites-z-index-ordering-in-chrome-13
+  transform: translate3d(0px, 0px, 0px);
+  -webkit-transform: translate3d(0px, 0px, 0px);
 }
 
 .modal {
@@ -169,6 +172,7 @@ body {
   width: 160px;
   .trophy {
     float: left;
+    z-index: -1;
   }
 }
 

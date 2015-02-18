@@ -157,7 +157,10 @@ Reel.prototype = {
 		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
 
 		if (DebugMode === 1) {
-			bgX = 0;
+			if (debugIndex < 2) {
+				bgX = 0;
+				debugIndex++;
+			}
 		} else if (DebugMode === 2 || DebugMode === 4) {
 			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
 			debugIndex--;

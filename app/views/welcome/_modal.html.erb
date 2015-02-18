@@ -5,19 +5,20 @@
 		<H1>WOOF... YOU ARE OUT OF BONES!</H1>
 		<div class='trophycase'>
 		{{#each trophies}}
-			<div class='trophy {{this}}'></div>
+			<div class='trophy {{this}}'>
+			</div>
 		{{/each}}
 		</div>
 		<H2>YOU COLLECTED {{ toys }} TROPH{{ plural }}.</H2>
-		<H2>WOULD YOU LIKE TO START OVER OR GET MORE BONES AND CONTINUE OR START OVER?</H2>
-		<button class="oval opaquen pawprintbutton" id='start_over'>
-			<div class='paw'>
+		<H2>WOULD YOU LIKE TO START OVER OR GET MORE BONES AND CONTINUE?</H2>
+		<button class="oval pawprintbutton" id='start_over'>
+			<div class='paw opaquen'>
 				<img src="images/Paw_Print_White.png" />
 			</div>
 			<span>START OVER</span>
 		</button>
-		<button class="oval opaquen pawprintbutton" id='get_more_bones'>
-			<div class='paw'>
+		<button class="oval pawprintbutton" id='get_more_bones'>
+			<div class='paw opaquen'>
 				<img src="images/Paw_Print_White.png" />
 			</div>
 			<span>ADD BONES</span>

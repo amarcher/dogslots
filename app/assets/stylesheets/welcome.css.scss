@@ -148,7 +148,7 @@ body {
   perspective: 1000px;
   .trophy {
     @include border-radius(5px);
-    @include transition_transform(9s linear);
+    @include transition_transform(4.5s linear);
     margin: 2px;
     width: 72px;
     height: 100px;

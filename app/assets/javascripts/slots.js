@@ -283,7 +283,7 @@ Slot.prototype = {
 			}
 
 			if (this.trophies.length == PurebredCount) {
-				setTimeout(function() { that.endGameWithWin(); }, 9000);
+				setTimeout(function() { that.endGameWithWin(); }, 4500);
 			}
 		}
  	},
@@ -302,11 +302,11 @@ Slot.prototype = {
 	 		if (this.trophies.indexOf(match) === -1) {
 	 			this.trophies.push(match);
 	 			$('.trophy[data-id="'+match+'"]').css({
-			     '-webkit-transform' : 'rotateY(-3240deg)',
-			     '-moz-transform' : 'rotateY(-3240deg)',  
-			      '-ms-transform' : 'rotateY(-3240deg)',  
-			       '-o-transform' : 'rotateY(-3240deg)',  
-			          'transform' : 'rotateY(-3240deg)'
+			     '-webkit-transform' : 'rotateY(-1440deg)',
+			     '-moz-transform' : 'rotateY(-1440deg)',  
+			      '-ms-transform' : 'rotateY(-1440deg)',  
+			       '-o-transform' : 'rotateY(-1440deg)',  
+			          'transform' : 'rotateY(-1440deg)'
 	 			}).addClass('earned');
 	 		}
 
@@ -384,7 +384,13 @@ Slot.prototype = {
 
   	this.addBones(StartBones);
   	this.trophies = [];
-  	$('.trophy').removeClass('earned');
+  	$('.trophy').removeClass('earned').css({
+			     '-webkit-transform' : 'rotateY(0deg)',
+			     '-moz-transform' : 'rotateY(0deg)',  
+			      '-ms-transform' : 'rotateY(0deg)',  
+			       '-o-transform' : 'rotateY(0deg)',  
+			          'transform' : 'rotateY(0deg)'
+	 			});
   	this.enableControls();
   },
 

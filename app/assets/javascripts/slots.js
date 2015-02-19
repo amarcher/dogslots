@@ -54,26 +54,29 @@ Bone.prototype = {
 };
 
 function rainBone() {
-	var boneImage, imgX, imgWidth, time, bone;
+	var boneImage, boneX, boneWidth, time, bone;
 	var screenHeight = $(document).height();
 	var startY = -0.2 * screenHeight;
 	var endY = 1.4 * screenHeight;
-	imgWidth = Math.random() * 100 + 50;
+	boneWidth = Math.random() * 100 + 20;
 	time = 2000;
-	imgX = Math.random() * $(document).width() - imgWidth;
+	boneX = Math.random() * ($(document).width() - boneWidth);
 	boneImage = bone_template({bone_id: "rain"});
-	bone = $(boneImage).appendTo(document.body);
+	bone = $(boneImage).appendTo('body');
 	bone.css({
-		width: imgWidth + 'px',
+		width: boneWidth + 'px',
 		top: startY + 'px' ,
-		left: imgX + 'px'
+		left: boneX + 'px'
 	})
+	.addClass('rain')
 	.animate({
     top: "+=" + endY + "px",
   },
   {duration: time,
   	easing: 'swing',
-  	complete: function() { this.remove(); }
+  	complete: function() { 
+  	console.log(bone);
+  	this.remove(); }
   });
 }
 
@@ -336,7 +339,7 @@ Slot.prototype = {
 
 	 		if ( (DebugMode != 4 && DebugMode != 5) || this.positions[0] === 2) {
 	 			this.playVideo(this.positions[0]);
-	 			this.rainBones(200);
+	 			this.rainBones(150);
 	 		}
 	 		if (DebugMode === 5) {
 	 			for(var i=0; i < this.boneTally-1; i++) {
@@ -520,7 +523,7 @@ Slot.prototype = {
 
   rainBones: function(quantity) {
   	for (var i=0; i<quantity; i++) {
-  		setTimeout(rainBone, 10*i);
+  		setTimeout(rainBone, 18*Math.sqrt(i*120));
   	}
   }
 };

@@ -1,0 +1,28 @@
+@import "_mixins";
+
+#overlay {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  opacity: .3;
+  z-index: 999;
+  // workaround for http://stackoverflow.com/questions/6953497/webkit-transform-overwrites-z-index-ordering-in-chrome-13
+  transform: translate3d(0px, 0px, 0px);
+  -webkit-transform: translate3d(0px, 0px, 0px);
+}
+
+.modal {
+  @include border-radius(4px);
+  position: absolute;
+  height: 80vh;
+  top: 10vh;
+  width: 80vw;
+  left: 10vw;
+  z-index: 1000;
+  text-align: center;
+  h1, h2 {
+    text-align: center;
+    max-width: 60vw;
+    margin: 20px auto 5px;
+  }
+}

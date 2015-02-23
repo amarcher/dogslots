@@ -75,8 +75,8 @@ function rainBone() {
   {duration: time,
   	easing: 'swing',
   	complete: function() { 
-  	console.log(bone);
-  	this.remove(); }
+  		this.remove();
+  	}
   });
 }
 
@@ -204,6 +204,7 @@ Reel.prototype = {
 			function() {
 				that.updatePositions();
 				that.callback(that._pos, that.top );
+				that.updatePositions();
 			}
 		);
 	},
@@ -214,6 +215,14 @@ Reel.prototype = {
 
   remainingRotation: function() {
   	return this._bg[0] % ImageWidth;
+  },
+
+  refreshPosition: function(position) {
+  	var bgX = ( 1 - position ) * ImageWidth;
+  	this.el.css(
+  		{'backgroundPosition': bgX + 'px ' + this._bg[1] + 'px'}
+		);
+		this.updatePositions();
   }
 };
 
@@ -525,12 +534,19 @@ Slot.prototype = {
   	for (var i=0; i<quantity; i++) {
   		setTimeout(rainBone, 18*Math.sqrt(i*120));
   	}
+  },
+
+  refreshReels: function() {
+  	this.reels[0].refreshPosition(this.positions[0]);
+  	this.reels[1].refreshPosition(this.positions[1]);
   }
 };
 
 $(document).ready(function() {
 	// precompile templates
 	DebugMode = parseInt($('.debug_mode').val());
+	SlotEl = $('.slot');
+	VideoEl = $('.video');
 
 	var bone_source   = $("#bone-template").html();
 	var modal_source   = $("#modal-template").html();
@@ -541,5 +557,19 @@ $(document).ready(function() {
 	modal_template = Handlebars.compile(modal_source);
 	winning_template = Handlebars.compile(winning_source);
 
-	var slot = new Slot( $('.slot'), $('.bones'), $('#control'), $('.dogname') );
+	var slot = new Slot( SlotEl, $('.bones'), $('#control'), $('.dogname') );
+
+	function onResize() {
+		ImageWidth = SlotEl.width();
+		ImageHeight = ImageWidth / 1.44;
+		SlotEl.height(ImageHeight + 'px');
+		VideoEl.width(ImageWidth + 'px');
+		VideoEl.height(ImageHeight * 2 + 'px');
+		slot.refreshReels();
+	}
+	onResize();
+
+	$( window ).resize(function() {
+		onResize();
+	});
 });

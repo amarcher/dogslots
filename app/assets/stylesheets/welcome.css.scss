@@ -3,17 +3,19 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 // @import "trig";
 // @import "wheel"; // Requires trig
+@import "_mixins";
+@import "_modal";
 
-$pink: #FFFFFF;
+$pink: rgba(255, 183, 183, 0.86);
+$purple: rgba(88, 153, 255, 0.86);
+$white: #FFFFFF;
 $darker: 5%;
 
-body {
-  -webkit-perspective: 1000px;
-  -moz-perspective: 1000px;
-  -o-perspective: 1000px;
-  -ms-perspective: 1000px;
-  perspective: 1000px;
-}
+// Four columns
+$labelsize: 15vw;
+$slotsize: 40vw;
+$bonedropsize: 20vw;
+$trophyzonesize: 15vw;
 
 @font-face{
   font-family: "Impact";
@@ -30,28 +32,6 @@ body {
   src: font-url('BD_Cartoon_Shout.ttf') format('truetype');
 }
 
-@mixin transform($value) {
-  -webkit-transform: $value;
-     -moz-transform: $value;
-      -ms-transform: $value;
-          transform: $value;
-}
-
-@mixin transition_transform($value) {
-  -webkit-transition: -webkit-transform $value;
-     -moz-transition: -moz-transform $value;
-      -ms-transition: -ms-transform $value;
-        -o-transform: -o-transform $value;
-          transition: transform $value;
-}
-
-@mixin border-radius($value) {
-  -webkit-border-radius: $value;
-     -moz-border-radius: $value;
-       -o-border-radius: $value;
-          border-radius: $value;
-}
-
 * {
   -moz-user-select: -moz-none;
    -khtml-user-select: none;
@@ -60,10 +40,30 @@ body {
    user-select: none;
 }
 
+body {
+  margin: 0px;
+  background-image: url(image-path('DOT_TILE_PATTERN-DARK_II.gif'));
+  background-repeat: repeat;
+  width: 100vw;
+  height: 100vh;
+}
+
 footer {
   position: absolute;
   bottom: 0px;
   right: 0px;
+}
+
+.bd-cartoon {
+  font-family: "BD_Cartoon_Shout";
+}
+
+.block {
+  display: block;
+}
+
+.big {
+  font-size: 2.2em;
 }
 
 .hide {
@@ -74,56 +74,22 @@ footer {
   font-family: "Impact";
 }
 
+.moonshiner {
+  font-family: "Moonshiner-Round";
+}
+
 .tracking {
   letter-spacing: 2px;
 }
 
-.big {
-  font-size: 2.2em;
-}
-
-body {
-  margin: 0px;
-  background-image: url(image-path('DOT_TILE_PATTERN-DARK_II.gif'));
-  background-repeat: repeat;
-}
-
-#overlay {
-  width: 100%;
-  height: 1000px;
-  background-color: black;
-  opacity: .3;
-  z-index: 999;
-  // workaround for http://stackoverflow.com/questions/6953497/webkit-transform-overwrites-z-index-ordering-in-chrome-13
-  transform: translate3d(0px, 0px, 0px);
-  -webkit-transform: translate3d(0px, 0px, 0px);
-}
-
-.modal {
-  @include border-radius(4px);
-  font-family: "BD_Cartoon_Shout";
-  position: absolute;
-  height: 660px;
-  top: 50px;
-  width: 80%;
-  left: 10%;
-  z-index: 1000;
-  text-align: center;
-  h1, h2 {
-    text-align: center;
-    max-width: 800px;
-    margin: 20px auto 5px;
-  }
-}
-
 #winning-modal {
-  background: rgba(255, 183, 183, 0.86);
-  border: 10px solid rgba(255, 183, 183, 0.95);
+  background: $pink;
+  // border: 10px solid rgba(255, 183, 183, 0.95);
 }
 
 #losing-modal {
-  background: rgba(88, 153, 255, 0.86);
-  border: 10px solid rgba(88, 153, 255, 0.86);
+  background: $purple;
+  // border: 10px solid rgba(88, 153, 255, 0.86);
 }
 
 .dogname {
@@ -135,17 +101,16 @@ body {
   }
 }
 
-
 .text_title {
   background-image: url(image-path('Lucky_Dog_Logo.png'));
   background-repeat: no-repeat;
-  width: 160px;
+  width: $labelsize;
 }
 
 .zone {
   float: left;
   height: 100vh;
-  margin: 10px 0px 0px;
+  margin: 0px;
 }
 
 .trophies, .trophycase {
@@ -154,12 +119,16 @@ body {
   -o-perspective: 1000px;
   -ms-perspective: 1000px;
   perspective: 1000px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
   .trophy {
     @include border-radius(5px);
     @include transition_transform(4.5s linear);
     margin: 2px;
     width: 72px;
     height: 100px;
+    display: inline-block;
     background-image: url(image-path('SmallLineup.png'));
     background-repeat: no-repeat;
     -webkit-transform-style: preserve-3d;
@@ -177,19 +146,16 @@ body {
 }
 
 .trophies {
-  width: 160px;
+  width: $trophyzonesize;
+  padding-top: 2%;
   .trophy {
-    float: left;
     z-index: -1;
   }
 }
 
 .trophycase {
-  text-align: center;
   max-width: 550px;
   min-height: 100px;
-  margin-left: auto;
-  margin-right: auto;
   .trophy{
     display: inline-block;
   }
@@ -227,17 +193,17 @@ body {
 }
 
 .slot_machine {
-  width: 520px;
+  width: $slotsize;
   position: relative;
   .display, .controls {
-    padding: 20px;
+    padding: 0px;
     position: relative;
   }
 }
 
 .controls {
   position: static;
-  width: 160px;
+  width: 100%;
   margin: 0px auto;
 }
 
@@ -253,19 +219,20 @@ body {
 }
 
 .bone_drop {
-  width: 280px;
+  width: $bonedropsize;
   padding: 20px 30px; 
 }
 
 .bone_drop {
   .bowl {
     position: block;
-    width: 240px;
-    height: 140px;
-    background-size: 240px 140px;
+    width: 100%;
+    min-width: 240px;
+    min-height: 200px;
+    background-size: 100%;
     z-index: 100;
     background-repeat: no-repeat;
-    margin: 200px auto 10px;
+    margin: 160px 0px 10px;
   }
   .bowl.empty {
     background-image: url(image-path('Bowl_Empty.png'));
@@ -279,13 +246,13 @@ body {
   .incoming {
     position: absolute;
     z-index: -1;
-    width: 280px;
-    height: 700px;
+    width: $bonedropsize;
+    height: 100vh;
   }
 }
 
 .bone {
-  width: 98px;
+  width: 40%;
   position: absolute;
   top: 800px;
   left: 90px;
@@ -295,10 +262,10 @@ body {
   @include border-radius(4px);
   text-align: center;
   margin: 20px auto 0px;
-  background-color: $pink;
-  width: 100%;
+  background-color: $white;
+  width: 90%;
   height: 60px;
-  line-height: 60px;
+  line-height: 100%;
 }
 
 .hvr-glow {
@@ -329,12 +296,12 @@ body {
 button:focus {outline:0;}
 
 button.circle {
-  @include border-radius(75px);
-  background-color: darken($pink, $darker);
+  @include border-radius(50%);
+  background-color: darken($white, $darker);
 	display: block;
 	margin: 10px auto;
-	width: 150px;
-	height: 150px;
+	width: 15vw;
+	height: 15vw;
 	font-weight: bold;
 	font-size: 2em;
 }
@@ -351,41 +318,43 @@ button.oval {
   border: 0px;
 }
 
-button:disabled {background-color: lighten($pink, $darker);}
+button:disabled {background-color: lighten($white, $darker);}
 
 
 .slot {
-	margin: 0px auto;
-	background-image: url(image-path('SLOT_DOGS_lineup_3.jpg'));
-  background-repeat: repeat-x;
-	width: 432px;
-	height: 300px;
-  &:nth-child(1) {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-  }
-  &:nth-child(2) {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-  }
+	background-position: left top;
+  background-repeat: repeat-x; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  margin: 0px auto;
+	width: 90%;
 }
 
 #slot1 {
   background-position : 0px 0px;
+  background-image: url(image-path('SLOT_DOGS_lineup_3_top.jpg'));
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 #slot2 {
-  background-position : 0px -300px;
+  background-position : 0px 0px;
+  background-image: url(image-path('SLOT_DOGS_lineup_3_bottom.jpg'));
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .video {
+  margin: 0px auto;
+  width: 90%;
   position: absolute;
-  display:table;
   top: 0px;
   left: 0px;
-  width: 432px;
-  height: 100%;
-  padding: 20px;
+  width: $slotsize + 'vw';
+  padding: 0px;
+  margin: 0px 5%;
 }
 
 video {
@@ -394,6 +363,8 @@ video {
   vertical-align:middle;
   position: relative;
   margin: 0px auto;
+  width: 100%;
+  height: 100%;
 }
 
 .paw {
@@ -418,39 +389,4 @@ video {
   margin: 0px auto;
 }
 
-.block {
-  display: block;
-}
-
-@media only screen and (max-width: 1200px) {
-
-  .zone {
-    height: 800px;
-  }
-  .trophies {
-    width: 340px;
-    .trophy {
-      float: right;
-    }
-  }
-
-  .bone_drop {
-  .bowl {
-    position: block;
-    width: 240px;
-    height: 140px;
-    background-size: 240px 140px;
-    z-index: 100;
-    background-repeat: no-repeat;
-    margin: 40px auto 10px;
-  }
-  .incoming {
-    position: absolute;
-    z-index: -1;
-    width: 280px;
-    height: 860px;
-    bottom: 200px;
-  }
-}
-
-}
+@import "mobile";

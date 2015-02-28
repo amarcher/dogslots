@@ -375,10 +375,12 @@ Slot.prototype = {
 			videoIndex = 1;
 		}
 		
-		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').show();
+		VideoEl.removeClass('hide');
+		activeVideo = this.activeVideo = $('video[data-id="' + videoIndex + '"]').removeClass('hide');
  		activeVideo.get(0).play();
  		activeVideo.get(0).addEventListener('ended', function() { 
- 			activeVideo.hide();
+ 			activeVideo.addClass('hide');
+ 			VideoEl.addClass('hide');
  			activeVideo.load();
  		});
  	},

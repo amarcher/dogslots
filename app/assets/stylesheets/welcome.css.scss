@@ -5,33 +5,24 @@
 // @import "wheel"; // Requires trig
 @import "_mixins";
 @import "_modal";
+@import "_fonts";
 
+// Colors
+$colorOffset: 5%;
 $pink: rgba(255, 183, 183, 0.86);
 $purple: rgba(88, 153, 255, 0.86);
 $white: #FFFFFF;
-$darker: 5%;
 
-// Four columns
+// Columns
 $labelsize: 15vw;
 $slotsize: 40vw;
 $bonedropsize: 20vw;
 $trophyzonesize: 15vw;
 
-@font-face{
-  font-family: "Impact";
-  src: font-url('Impact.ttf') format('truetype');
-}
+// Dimensions
+$textboxHeight: 60px;
 
-@font-face{
-  font-family: "Moonshiner-Round";
-  src: font-url('Moonshiner-Round.otf');
-}
-
-@font-face{
-  font-family: "BD_Cartoon_Shout";
-  src: font-url('BD_Cartoon_Shout.ttf') format('truetype');
-}
-
+// DOM Elements
 * {
   -moz-user-select: -moz-none;
    -khtml-user-select: none;
@@ -54,10 +45,62 @@ footer {
   right: 0px;
 }
 
-.bd-cartoon {
-  font-family: "BD_Cartoon_Shout";
+// Buttons
+button:focus {outline:0;}
+
+button.circle {
+  @include border-radius(50%);
+  background-color: darken($white, $colorOffset);
+  display: block;
+  margin: 10px auto;
+  width: 15vw;
+  height: 15vw;
+  font-weight: bold;
+  font-size: 2em;
 }
 
+button.oval {
+  @include border-radius(4px);
+  display: inline-block;
+  margin: 10px auto;
+  width: 200px;
+  min-height: 200px;
+  font-weight: bold;
+  font-size: 2em;
+  background: rgba(255,255,255,0);
+  border: 0px;
+}
+
+button:disabled {background-color: lighten($white, $colorOffset);}
+
+.paw {
+  position: static;
+  width: 100%;
+  height: 150px;
+  text-align: center;
+  img {
+    width: 150px;
+    height: 150px;
+    margin: 0px auto;
+  }
+  span {
+    width: 150px;
+    height: 50px;
+  }
+}
+
+// Modals
+#winning-modal {
+  background: $pink;
+  // border: 10px solid rgba(255, 183, 183, 0.95);
+}
+
+#losing-modal {
+  background: $purple;
+  // border: 10px solid rgba(88, 153, 255, 0.86);
+}
+
+// Atomic Classes
 .block {
   display: block;
 }
@@ -70,28 +113,17 @@ footer {
   display: none;
 }
 
-.impact {
-  font-family: "Impact";
-}
-
-.moonshiner {
-  font-family: "Moonshiner-Round";
-}
-
 .tracking {
   letter-spacing: 2px;
 }
 
-#winning-modal {
-  background: $pink;
-  // border: 10px solid rgba(255, 183, 183, 0.95);
+.zone {
+  float: left;
+  height: 100vh;
+  margin: 0px;
 }
 
-#losing-modal {
-  background: $purple;
-  // border: 10px solid rgba(88, 153, 255, 0.86);
-}
-
+// Text Fields
 .dogname {
   .wild {
     color: rgb(190, 165, 65);
@@ -107,12 +139,17 @@ footer {
   width: $labelsize;
 }
 
-.zone {
-  float: left;
-  height: 100vh;
-  margin: 0px;
+.win_count, .bone_count, .dogname {
+  @include border-radius(4px);
+  text-align: center;
+  margin: 20px auto 0px;
+  background-color: $white;
+  width: 90%;
+  height: $textboxHeight;
+  line-height: $textboxHeight;
 }
 
+// Trophies
 .trophies, .trophycase {
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
@@ -170,8 +207,14 @@ footer {
     animation-iteration-count: infinite;
     animation-duration: 2s;
   }
+  img {
+    width: 150px;
+    height: 150px;
+    margin: 0px auto;
+  }
 }
 
+// Animations
 /* WebKit and Opera browsers */
 @-webkit-keyframes spinner {
   from { -webkit-transform: rotateY(0deg);    }
@@ -192,6 +235,7 @@ footer {
   }
 }
 
+// Slot Machine
 .slot_machine {
   width: $slotsize;
   position: relative;
@@ -199,12 +243,6 @@ footer {
     padding: 0px;
     position: relative;
   }
-}
-
-.controls {
-  position: static;
-  width: 100%;
-  margin: 0px auto;
 }
 
 .dotted-border {
@@ -216,6 +254,13 @@ footer {
   -webkit-border-image: url(image-path('border2.png')) 40 40 scale; /* Safari 3.1-5 */
   -o-border-image: url(image-path('border2.png')) 40 40 round; /* Opera 11-12.1 */
   border-image: url(image-path('border2.png')) 40 40 round;
+}
+
+// Bowl and Bone Drop Zone
+.controls {
+  position: static;
+  width: 100%;
+  margin: 0px auto;
 }
 
 .bone_drop {
@@ -258,16 +303,6 @@ footer {
   left: 90px;
 }
 
-.win_count, .bone_count, .dogname {
-  @include border-radius(4px);
-  text-align: center;
-  margin: 20px auto 0px;
-  background-color: $white;
-  width: 90%;
-  height: 60px;
-  line-height: 100%;
-}
-
 .hvr-glow {
   display: inline-block;
   vertical-align: middle;
@@ -292,34 +327,6 @@ footer {
 .opaquen:hover, .opaquen:focus, .opaquen-glow:active {
   opacity: 1;
 }
-
-button:focus {outline:0;}
-
-button.circle {
-  @include border-radius(50%);
-  background-color: darken($white, $darker);
-	display: block;
-	margin: 10px auto;
-	width: 15vw;
-	height: 15vw;
-	font-weight: bold;
-	font-size: 2em;
-}
-
-button.oval {
-  @include border-radius(4px);
-  display: inline-block;
-  margin: 10px auto;
-  width: 200px;
-  min-height: 200px;
-  font-weight: bold;
-  font-size: 2em;
-  background: rgba(255,255,255,0);
-  border: 0px;
-}
-
-button:disabled {background-color: lighten($white, $darker);}
-
 
 .slot {
 	background-position: left top;
@@ -365,28 +372,6 @@ video {
   margin: 0px auto;
   width: 100%;
   height: 100%;
-}
-
-.paw {
-  position: static;
-  width: 100%;
-  height: 150px;
-  text-align: center;
-  img {
-    width: 150px;
-    height: 150px;
-    margin: 0px auto;
-  }
-  span {
-    width: 150px;
-    height: 50px;
-  }
-}
-
-.trophycase > img {
-  width: 150px;
-  height: 150px;
-  margin: 0px auto;
 }
 
 @import "mobile";

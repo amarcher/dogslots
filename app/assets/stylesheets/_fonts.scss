@@ -1,0 +1,27 @@
+// Fonts
+@font-face {
+  font-family: "BD_Cartoon_Shout";
+  src: font-url('BD_Cartoon_Shout.ttf') format('truetype');
+}
+
+.bd-cartoon {
+  font-family: "BD_Cartoon_Shout";
+}
+
+@font-face {
+  font-family: "Impact";
+  src: font-url('Impact.ttf') format('truetype');
+}
+
+.impact {
+  font-family: "Impact";
+}
+
+@font-face {
+  font-family: "Moonshiner-Round";
+  src: font-url('Moonshiner-Round.otf');
+}
+
+.moonshiner {
+  font-family: "Moonshiner-Round";
+}

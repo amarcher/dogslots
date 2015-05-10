@@ -1,0 +1,7 @@
+/Users/andya/.rbenv/versions/jruby-1.7.3/bin/jruby extconf.rb
+NotImplementedError: C extension support is not enabled. Pass -Xcext.enabled=true to JRuby or set JRUBY_OPTS or modify .jrubyrc to enable.
+
+   (root) at /Users/andya/.rbenv/versions/jruby-1.7.3/lib/ruby/shared/mkmf.rb:8
+  require at org/jruby/RubyKernel.java:1027
+   (root) at /Users/andya/.rbenv/versions/jruby-1.7.3/lib/ruby/shared/rubygems/custom_require.rb:1
+   (root) at extconf.rb:1

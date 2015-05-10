@@ -107,7 +107,7 @@ Reel.prototype = {
 		var bgX = this._bg[0] - (this.goLeft * (Math.random() * NumberOfImages % 2) * ImageWidth );
 
 		this.spinning = true;
-		this.el.delay(!this.top * TopOffset).animate(
+		this.el.delay(+this.top * TopOffset).animate(
 			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
 			InitialSpinDuration - (this.top * TopOffset),
 			"swing",
@@ -120,7 +120,7 @@ Reel.prototype = {
 		
 		// Update positions and attach event handlers
 		this.updatePositions();
-		this.el.on("mousedown", function(event) {
+		this.el.on("vclick", function(event) {
 			event.preventDefault();
 			event.stopPropagation();
 			that.el.stop(); // stop midspin animation
@@ -143,7 +143,7 @@ Reel.prototype = {
 		// Update position and remove event handlers
 		this.updatePositions();
 		this.spinning = false;
-		this.el.off("mousedown");
+		this.el.off("vclick");
 
 		// Play sound
 		ion.sound.play("tap");

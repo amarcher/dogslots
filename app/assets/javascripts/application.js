@@ -19,6 +19,7 @@
 //= require ../../../vendor/assets/javascripts/spritely
 //= require ../../../vendor/assets/javascripts/ion.sound
 //= require ../../../vendor/assets/javascripts/jquery.ion.sound
+//= require ../../../vendor/assets/javascripts/jquery.mobile-1.4.5.min
 //= require ../../../vendor/assets/javascripts/handlebars
 //= require turbolinks
 //= require slots.js

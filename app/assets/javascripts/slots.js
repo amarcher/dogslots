@@ -11,6 +11,7 @@ MidSpinDuration = 13600;
 EndSpinDuration = 1800;
 TopOffset = 200;
 SpinDuration = 3200;
+WheelEnd = NumberOfImages * ImageWidth;
 
 ion.sound({
   sounds: [
@@ -102,6 +103,7 @@ Reel.prototype = {
 	},
 
 	initialSpin: function() {
+          debugger
 		// Rotate one full time around
 		var that = this;
 		var bgX = this._bg[0] - (this.goLeft * (Math.random() * NumberOfImages % 2) * ImageWidth );
@@ -187,6 +189,21 @@ Reel.prototype = {
 
   remainingRotation: function() {
   	return this._bg[0] % ImageWidth;
+  },
+
+  _spin: function(velocity) {  
+    // TODO: add direction (this.goLeft) 
+    this.position += velocity;
+    
+    if (this.position >= WheelEnd) {
+      this.position -= WheelEnd;
+    }
+    
+    this.el.get(0).style.transform = 'translateX('+this.position+'px)';
+
+    if (this.spinning) {
+      requestAnimationFrame(this._spin);
+    }
   }
 };
 
@@ -214,7 +231,7 @@ Slot.prototype = {
 		// add start bones
 		this.addBones(StartBones);
 		// set up click & "s" key controller
-		this.control.click( function() {
+		this.control.on('vclick', function() {
 		  that.start();
 		});
 
@@ -230,14 +247,14 @@ Slot.prototype = {
 		}
 
 		// event handlers for end-game
-		$(document).on('click', '#start_over', function(event){
+		$(document).on('vclick', '#start_over', function(event){
 	  	event.stopPropagation();
 	  	console.log('starting over');
 	  	that.restart();
 	  	that.playSound('game start');
 	  	$('#overlay, .modal').remove();
 	  });
-	  $(document).on('click', '#get_more_bones', function(event){ 
+	  $(document).on('vclick', '#get_more_bones', function(event){ 
 	  	event.stopPropagation();
 	  	console.log('getting more bones');
 	  	that.addBones(StartBones);

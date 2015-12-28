@@ -1,18 +1,26 @@
 // Constants
-DebugModes = ["Off","First","AdvanceToWin","WinWithWild", "One from win"];
+DebugModes = ["Off", "First", "AdvanceToWin", "WinWithWild", "One from win"];
 var debugIndex = 0;
 NumberOfImages = 13;
 PurebredCount = NumberOfImages - 1;
-ImageWidth = 432;
 StartBones = 3;
-Rotations = 4;
-InitialSpinDuration = 400;
-MidSpinDuration = 13600;
-EndSpinDuration = 1800;
-TopOffset = 200;
-SpinDuration = 3200;
-WheelEnd = NumberOfImages * ImageWidth;
-Alignment = [0, 108/13, 217/13, 322/13, 435/13, 540/13, 650/13, 750/13, 860/13, 970/13, 1080/13, 1190/13, 1210/13, 100];
+InitialSpinDuration = .5;
+MidSpinDuration = 6;
+EndSpinDuration = 800;
+TopOffset = 15;
+
+function EASE_IN(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * (currentIteration /= totalIterations) * currentIteration + startValue;
+}
+
+function EASE_OUT(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * Math.sqrt(1 - (currentIteration = currentIteration / totalIterations - 1) * currentIteration) + startValue;
+}
+
+function NO_EASING(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * currentIteration / totalIterations + startValue;
+}
+
 
 ion.sound({
   sounds: [
@@ -38,7 +46,6 @@ function Bone(boneId) {
 }
 
 Bone.prototype = {
-
 	add: function() {
 		this.boneBank.prepend( this.html );
 		this.el = $('#bone_' + this.boneId);
@@ -75,168 +82,103 @@ NameArea.prototype = {
 
 function Reel(el, top, callback) {
 	this.el = el;
+  this.img = el.find('.reel');
 	this.top = top;
-  this.offset = 100 * (1 - top);
-	this._bg = null;
-	this._pos = null;
-	this.goLeft = 1;
+  this.offset = TopOffset * (1 - top);
 	this.spinning = false;
 	this.callback = callback;
   this.position = 0;
-  this.updatePositions(); // TBD can you call this here?
 }
 
 Reel.prototype = {
+  reset: function() {
+    this.iterations = 1;
+    this.imgWidth = this.imgWidth || 13 * this.img.get(0).offsetWidth / 14.0;
+    this.cellWidth = this.cellWidth || this.imgWidth / (1.0 * NumberOfImages);
+    this.setPosition(this.getPosition());
+  },
 
-	bg: function() {
-		var coords = this.el.css("backgroundPosition").split(" ");
-		for (var i=0; i<coords.length; i++){
-			coords[i] = parseFloat(coords[i]);
-		}
-		return coords;
-	},
-
-	pos: function() {
-		return Math.abs((NumberOfImages - Math.round(this._bg[0] / ImageWidth) % (NumberOfImages * this.goLeft)) % NumberOfImages) + 1;
-	},
-
-	updatePositions: function() {
-		this._bg = this.bg();
-		this._pos = this.pos();
-	},
-
-	initialSpin: function() {
-		// Rotate one full time around
-		var that = this;
-		var bgX = this._bg[0] - (this.goLeft * (Math.random() * NumberOfImages % 2) * ImageWidth );
-
-		this.spinning = true;
-
-    var duration = Math.random() * 30 + 20;
-    var velocity = duration / 20;
-    requestAnimationFrame(this._spin.bind(this, velocity, duration, this.midSpin.bind(this)));
-		// this.el.delay(+this.top * TopOffset).animate(
-		// 	{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-		// 	InitialSpinDuration - (this.top * TopOffset),
-		// 	"swing",
-		// 	this.midSpin.bind(that)
-		// );
-	},
-
-	midSpin: function() {
-		var that = this;
-
-    var duration = Math.random() * 100 + 400;
-    var velocity = duration / 600;
-		
-		// Update positions and attach event handlers
-		// this.updatePositions();
-		this.el.on("mousedown", function(event) {
-			event.preventDefault();
-			event.stopPropagation();
-      // that.el.stop(); // stop midspin animation
-      that.spinning = false;
-    });
-
-
-    requestAnimationFrame(this._spin.bind(this, velocity, duration, this._endSpin.bind(this)));
-		// bgX = -(this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0]);
-
-		// this.el.animate(
-		// 	{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-		// 	MidSpinDuration - (12 * this.top * TopOffset),
-		// 	"linear",
-		// 	that.endSpin.bind(that)
-		// );
-	},
-
-  _endSpin: function() {
-    this.el.off("mousedown");
-    ion.sound.play("tap");
-
-    var clickedIndex = Math.floor( ( this.position % 100) / NumberOfImages);
-    var endIndex = (clickedIndex + 2) % NumberOfImages;
-    var duration = Alignment[endIndex];
-    if (duration < this.position) {
-      duration += 100;
+  stop: function(event) {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+      event.stopPropagation();
     }
-    console.log('duration', duration);
-    var velocity = 1;
+
+    ion.sound.play("tap");
+    this.el.off("mousedown");
+    this.spinning = false;
+  },
+
+	getPosition: function() {
+		return this.position % this.imgWidth;
+	},
+
+  setPosition: function(left) {
+    this.position = left;
+    this.img.get(0).style.left = this.getPosition() + 'px';
+  },
+
+  initialSpin: function() {
+    this.reset();
     this.spinning = true;
 
-    requestAnimationFrame(this._spin.bind(this, velocity, duration, function(){
-      this.callback(endIndex, this.top);
-    }.bind(this)));
-    console.log('clicked', clickedIndex);
-    console.log('end', endIndex);
+    var endValue = this.cellWidth * (1 + 2 * Math.random());
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: InitialSpinDuration * 60 + this.offset,
+      easingFunction: EASE_IN,
+      callback: this.midSpin.bind(this)
+    }));
   },
 
-	endSpin: function() {
-		var bgX, that = this;
-		
-		// Update position and remove event handlers
-		this.updatePositions();
-		this.spinning = false;
-		this.el.off("mousedown");
+  midSpin: function() {
+    this.spinning = true;
 
-		// Play sound
-		ion.sound.play("tap");
+    var endValue = 3 * this.imgWidth + Math.ceil(Math.random() * NumberOfImages) * this.cellWidth;
+    this.el.on("mousedown", this.stop.bind(this));
 
-		// Change spin direction for next go
-		this.goLeft = -this.goLeft;
-		
-		// Calculate end spin position
-		bgX = this._bg[0];
-		bgX -= this.remainingRotation();
-		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
-
-		if (DebugMode === 1) {
-			if (debugIndex < 2) {
-				bgX = 0;
-				debugIndex++;
-			}
-		} else if (DebugMode === 2 || DebugMode === 4) {
-			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
-			debugIndex--;
-		} else if (DebugMode === 3) {
-			bgX = (debugIndex % 2 === 0) ? ImageWidth : bgX;
-			debugIndex++;
-		}
-
-		// Advance reel to end spin position
-		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			EndSpinDuration,
-			"easeOutQuint",
-			function() {
-				that.updatePositions();
-				that.callback(that._pos, that.top );
-			}
-		);
-	},
-
-	finalPos: function() {
- 		return Math.floor( ( Math.random() * NumberOfImages ) ) + 1;
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: MidSpinDuration * 60,
+      easingFunction: NO_EASING,
+      callback: this.endSpin.bind(this)
+    }));
   },
 
-  remainingRotation: function() {
-  	return this._bg[0] % ImageWidth;
+  endSpin: function() {
+    this.stop();
+    this.spinning = true;
+
+    var clickedCell = -Math.round(this.position / this.cellWidth);
+    var endValue = (clickedCell + 2) * this.cellWidth;
+    var endIndex = (clickedCell + 2) % NumberOfImages;
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: EndSpinDuration * 60,
+      easingFunction: EASE_OUT,
+      callback: function() {
+        this.callback(endIndex + 1, this.top);
+      }.bind(this)
+    }));
   },
 
-  _spin: function(velocity, endPosition, callback) {  
-    // TODO: add direction (this.goLeft) 
-    this.position += velocity;
+  _spin: function(opts) {
+    var newPosition = opts.easingFunction(this.iterations, opts.startValue, opts.endValue, opts.totalIterations);
 
-    if (this.offset < 1) { console.log('going toward ', endPosition);
-    console.log('presently at ', this.position); }
-    
-    if (this.spinning && this.position < endPosition) {
-      this.el.get(0).style.backgroundPosition = '' + this.position + '% ' + this.offset + '%';
-      requestAnimationFrame(this._spin.bind(this, velocity, endPosition, callback));
+    if (this.spinning && newPosition > opts.endValue) {
+      this.iterations++;
+      this.setPosition(newPosition);
+      requestAnimationFrame(this._spin.bind(this, opts));
     } else {
-      this.position %= 100;
-      this.el.get(0).style.backgroundPosition = '' + this.position + '% ' + this.offset + '%';
-      callback();
+      this.iterations = 1;
+      this.spinning = false;
+      this.setPosition(opts.endValue);
+      opts.callback();
     }
   }
 };
@@ -251,7 +193,6 @@ function Slot(els, boneEl, controlEl, nameEl ) {
 	this.control = controlEl;
 	this.nameArea = new NameArea( nameEl );
 	this.activeVideo = null;
-	this.goLeft = 1;
 	this.trophies = [];
 	this.spinningReels = 0;
 	this.bowl = $('.bowl');
@@ -299,7 +240,6 @@ Slot.prototype = {
 	},
 
 	start: function() {
-		var that = this, bgX, bgY, rotation;
 		this.stopVideo();
 		this.playSound('coin');
 		this.removeBone();

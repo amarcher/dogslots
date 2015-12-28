@@ -351,8 +351,9 @@ button:disabled {background-color: lighten($pink, $darker);}
 
 .slot {
 	margin: 0px auto;
-	background-image: url(image-path('SLOT_DOGS_lineup_3.jpg'));
-  background-repeat: repeat-x;
+  position: relative;
+	// background-image: url(image-path('SLOT_DOGS_lineup_3.jpg'));
+  // background-repeat: repeat-x;
 	width: 432px;
 	height: 300px;
   overflow: hidden;
@@ -366,13 +367,18 @@ button:disabled {background-color: lighten($pink, $darker);}
   }
 }
 
-#slot1 {
-  background-position : 0px 0px;
+.reel {
+  position: absolute;
+  height: 300px;
 }
 
-#slot2 {
-  background-position : 0px -300px;
-}
+// #slot1 {
+//   background-position : 0px 0px;
+// }
+
+// #slot2 {
+//   background-position : 0px -300px;
+// }
 
 .video {
   position: absolute;

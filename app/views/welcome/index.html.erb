@@ -1,8 +1,8 @@
 <div class='text_title zone'></div>
 <div class='slot_machine zone'>
 	<div class='display dotted-border'>
-		<div class='slot' id='slot1'><!-- <img class='reel' id='reel1' src='SLOT_DOGS_lineup_3_big_top.jpg' /> --></div>
-		<div class='slot' id='slot2'><!-- <img class='reel' id='reel2' src='SLOT_DOGS_lineup_3_big_bottom.jpg' /> --></div>
+		<div class='slot' id='slot1'><img class='reel' id='reel1' src='SLOT_DOG_lineup_4_top.jpg' /></div>
+		<div class='slot' id='slot2'><img class='reel' id='reel2' src='SLOT_DOG_lineup_4_bottom.jpg' /></div>
 		<div class='video hide'>
 			<video webkit-playsinline data-id='1' class='hide' width='432px' height='600px' src='./movies/1_AUSSIE_NEW.mp4' type='video/mp4'></video>
 			<video webkit-playsinline data-id='2' class='hide' width='432px' height='600px' src='./movies/2_BOSTON_TERRIER_NEW.mp4' type='video/mp4'></video>
@@ -32,16 +32,6 @@
 		<div class='trophy' data-id='<%= index %>'></div>
 	<% end%>
 </div>
-<footer>
-	<span class='st_twitter_large' displayText='Tweet'></span>
-	<span class='st_googleplus_large' displayText='Google+'></span>
-	<span class='st_facebook_large' displayText='Facebook'></span>
-	<span class='st_instagram_large' displayText='Instagram'></span>
-	<span class='st_text_large' displayText='Sms'></span>
-	<span class='st_pinterest_large' displayText='Pinterest'></span>
-	<span class='st_email_large' displayText='Email'></span>
-	<span class='st_sharethis_large' displayText='ShareThis'></span>
-</footer>
 <input type='hidden' class='debug_mode' name='debug_mode' value='<%= @debug if @debug %>'/>
 
 <%= render 'bone' %>

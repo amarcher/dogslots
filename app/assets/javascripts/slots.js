@@ -81,13 +81,14 @@ NameArea.prototype = {
   }
 };
 
-function Reel(el, top, callback) {
+function Reel(el, top, callback, stopCallback) {
 	this.el = el;
   this.img = el.find('.reel');
 	this.top = top;
   this.offset = TopOffset * (1 - top);
 	this.spinning = false;
-	this.callback = callback;
+  this.callback = callback;
+	this.stopCallback = stopCallback;
   this.position = 0;
 }
 
@@ -106,6 +107,7 @@ Reel.prototype = {
     }
 
     ion.sound.play("tap");
+    this.stopCallback();
     this.el.off("mousedown");
     this.spinning = false;
   },
@@ -132,6 +134,11 @@ Reel.prototype = {
   setPosition: function(left) {
     this.position = left;
     this.img.get(0).style.left = this.getPosition() + 'px';
+  },
+
+  setIndex: function(index) {
+    var left = this.cellWidth * (index - 1);
+    this.setPosition(left);
   },
 
   initialSpin: function() {
@@ -199,7 +206,8 @@ Reel.prototype = {
 };
 
 function Slot(els, boneEl, controlEl, nameEl) {
-	this.reels = [ new Reel($(els[0]), true, this.callback.bind(this)), new Reel($(els[1]), false, this.callback.bind(this)) ];
+	this.reels = [ new Reel($(els[0]), true, this.callback.bind(this), this.toggleControl.bind(this, false)),
+                 new Reel($(els[1]), false, this.callback.bind(this), this.toggleControl.bind(this, false)) ];
 	this.positions = [1, 1];
 	this.bones = [];
 	this.nextBoneId = 0;
@@ -215,7 +223,6 @@ function Slot(els, boneEl, controlEl, nameEl) {
 }
 
 Slot.prototype = {
-
 	setUpGame: function() {
 		this.addBones(StartBones);
 		this.enableControls();
@@ -259,7 +266,7 @@ Slot.prototype = {
 
 			if (this.winner()) {
 				this.win();
-			} else if (!this.winner() && this.boneTally === 0) {
+			} else if (this.boneTally === 0) {
 				setTimeout(this.gameOver.bind(this), 600);
 			} else {
 				this.enableControls();
@@ -282,15 +289,16 @@ Slot.prototype = {
  	win: function() {
  		if (this.trueMatch()) {
 	 		var match = this.positions[1];
-	 		if (this.trophies.indexOf(match) === -1) {
-	 			this.trophies.push(match);
-	 			$('.trophy[data-id="'+match+'"]').css({
-			     '-webkit-transform' : 'rotateY(-1440deg)',
-			     '-moz-transform' : 'rotateY(-1440deg)',  
-			      '-ms-transform' : 'rotateY(-1440deg)',  
-			       '-o-transform' : 'rotateY(-1440deg)',  
-			          'transform' : 'rotateY(-1440deg)'
-	 			}).addClass('earned');
+      this.playVideo(match);
+      if (this.trophies.indexOf(match) === -1) {
+        this.trophies.push(match);
+        $('.trophy[data-id="'+match+'"]').css({
+           '-webkit-transform' : 'rotateY(-1440deg)',
+           '-moz-transform' : 'rotateY(-1440deg)',  
+            '-ms-transform' : 'rotateY(-1440deg)',  
+             '-o-transform' : 'rotateY(-1440deg)',  
+                'transform' : 'rotateY(-1440deg)'
+        }).addClass('earned');
 
         this.positions[0]++;
         setTimeout(this.reels[0].advanceTo.bind(this.reels[0], this.positions[0], function() {
@@ -298,9 +306,9 @@ Slot.prototype = {
           this.clearDogName();
           this.setDogName();
         }.bind(this)), 4500);
-	 		}
+      }
     } else {
-      this.enableControls();
+      setTimeout(this.enableControls.bind(this), 750);
     }
     
  		this.addBones(this.payout());
@@ -357,14 +365,15 @@ Slot.prototype = {
   },
 
   restart: function() {
-  	// remove all bones
-  	console.log('restarting');
-
   	for (var i=0; i<this.bones.length; i++) {
   		this.removeBone();
   	}
 
+    this.clearDogName();
     this.positions = [1, 1];
+    this.reels[0].setIndex(this.positions[0]);
+    this.reels[1].setIndex(this.positions[1]);
+    this.setDogName();
     this.addBones(StartBones);
     this.trophies = [];
     $('.trophy').removeClass('earned').css({
@@ -374,7 +383,7 @@ Slot.prototype = {
              '-o-transform' : 'rotateY(0deg)',  
                 'transform' : 'rotateY(0deg)'
         });
-    this.reels[0].advanceTo(this.positions[0], this.enableControls.bind(this));
+    this.enableControls();
   },
 
   gameOver: function() {
@@ -408,23 +417,27 @@ Slot.prototype = {
 	 );
   },
 
+  toggleControl: function(enabled) {
+    this.control.prop("disabled", !enabled)
+  },
+
   disableControls: function() {
-    this.control.prop("disabled", true);
-  	this.control.text('Stop');
+    this.toggleControl(false);
     
     setTimeout(function() {
-      this.control.prop("disabled", false);
+    	this.control.text('Stop');
+      this.toggleControl(true);
       this.control.off('click');
       this.control.on('click', function() {
         this.control.off('click');
-        this.control.prop('disabled', true);
+        this.toggleControl(false);
         this.reels[1].stop();
       }.bind(this));
     }.bind(this), (InitialSpinDuration + TopOffset / 60) * 1000);
   },
 
   enableControls: function() {
-    this.control.prop('disabled', false);
+    this.toggleControl(true);
     this.control.text('Spin');
     this.control.off('click');
     this.control.on('click', this.start.bind(this));

@@ -44,6 +44,13 @@ $darker: 5%;
           border-radius: $value;
 }
 
+@mixin perspective($value) {
+  -webkit-perspective: $value;
+     -moz-perspective: $value;
+       -o-perspective: $value;
+          perspective: $value;
+}
+
 * {
   -moz-user-select: -moz-none;
    -khtml-user-select: none;
@@ -140,12 +147,8 @@ body {
   margin: 10px 0px 0px;
 }
 
-.trophies, .trophycase {
-  -webkit-perspective: 1000px;
-  -moz-perspective: 1000px;
-  -o-perspective: 1000px;
-  -ms-perspective: 1000px;
-  perspective: 1000px;
+.trophies, .trophycase {;
+  @include perspective(1000px);
   .trophy {
     @include border-radius(5px);
     @include transition_transform(4.5s linear);
@@ -348,10 +351,12 @@ button:disabled {background-color: lighten($pink, $darker);}
 
 .slot {
 	margin: 0px auto;
-	background-image: url(image-path('SLOT_DOGS_lineup_3.jpg'));
-  background-repeat: repeat-x;
+  position: relative;
+	// background-image: url(image-path('SLOT_DOGS_lineup_3.jpg'));
+  // background-repeat: repeat-x;
 	width: 432px;
 	height: 300px;
+  overflow: hidden;
   &:nth-child(1) {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -362,13 +367,18 @@ button:disabled {background-color: lighten($pink, $darker);}
   }
 }
 
-#slot1 {
-  background-position : 0px 0px;
+.reel {
+  position: absolute;
+  height: 300px;
 }
 
-#slot2 {
-  background-position : 0px -300px;
-}
+// #slot1 {
+//   background-position : 0px 0px;
+// }
+
+// #slot2 {
+//   background-position : 0px -300px;
+// }
 
 .video {
   position: absolute;

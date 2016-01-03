@@ -1,16 +1,25 @@
 // Constants
-DebugModes = ["Off","First","AdvanceToWin","WinWithWild", "One from win"];
-var debugIndex = 0;
 NumberOfImages = 13;
 PurebredCount = NumberOfImages - 1;
-ImageWidth = 432;
 StartBones = 3;
-Rotations = 4;
-InitialSpinDuration = 400;
-MidSpinDuration = 13600;
-EndSpinDuration = 1800;
-TopOffset = 200;
-SpinDuration = 3200;
+InitialSpinDuration = .5;
+AdvanceDuration = 1;
+MidSpinDuration = 12;
+EndSpinDuration = 1;
+TopOffset = 0;
+
+function EASE_IN(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * (currentIteration /= totalIterations) * currentIteration + startValue;
+}
+
+function EASE_OUT(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * Math.sin(currentIteration / totalIterations * (Math.PI / 2)) + startValue;
+}
+
+function NO_EASING(currentIteration, startValue, changeInValue, totalIterations) {
+  return changeInValue * currentIteration / totalIterations + startValue;
+}
+
 
 ion.sound({
   sounds: [
@@ -30,15 +39,16 @@ ion.sound({
 function Bone(boneId) {
 	this.el = null;
 	this.boneId = boneId;
-	this.context = { bone_id: this.boneId };
-	this.html    = bone_template(this.context);
+	this.context = {
+    bone_id: this.boneId
+  };
+	this.html = bone_template(this.context);
 	this.boneBank = $('.incoming'); // TODO: move after doc loads
 }
 
 Bone.prototype = {
-
 	add: function() {
-		this.boneBank.prepend( this.html );
+		this.boneBank.prepend(this.html);
 		this.el = $('#bone_' + this.boneId);
 		this.el.css({ top: '-200px' }).animate({ 
       top: "+=600px",
@@ -49,17 +59,17 @@ Bone.prototype = {
 	remove: function() {
 		this.el.animate({ 
       top: "+=800px",
-    }, 500 ).hide(1000);
+    }, 500).hide(1000);
 	}
 };
 
-function NameArea( node ) {
+function NameArea(node) {
 	this.names = node.children();
 	this.activeEl = null;
 }
 
 NameArea.prototype = {
-  display: function( newPos ) {
+  display: function(newPos) {
   	this.activeEl = $('[data-posone="' + newPos[0] + '"][data-postwo="' + newPos[1] + '"]');
   	this.activeEl.toggleClass('hide');
   },
@@ -71,136 +81,141 @@ NameArea.prototype = {
   }
 };
 
-function Reel(el, top, callback) {
+function Reel(el, top, callback, stopCallback) {
 	this.el = el;
+  this.img = el.find('.reel');
 	this.top = top;
-	this._bg = null;
-	this._pos = null;
-	this.goLeft = 1;
+  this.offset = TopOffset * (1 - top);
 	this.spinning = false;
-	this.callback = callback;
-	this.updatePositions(); // TBD can you call this here?
+  this.callback = callback;
+	this.stopCallback = stopCallback;
+  this.position = 0;
 }
 
 Reel.prototype = {
-
-	bg: function() {
-		var coords = this.el.css("backgroundPosition").split(" ");
-		for (var i=0; i<coords.length; i++){
-			coords[i] = parseFloat(coords[i]);
-		}
-		return coords;
-	},
-
-	pos: function() {
-		return Math.abs((NumberOfImages - Math.round(this._bg[0] / ImageWidth) % (NumberOfImages * this.goLeft)) % NumberOfImages) + 1;
-	},
-
-	updatePositions: function() {
-		this._bg = this.bg();
-		this._pos = this.pos();
-	},
-
-	initialSpin: function() {
-		// Rotate one full time around
-		var that = this;
-		var bgX = this._bg[0] - (this.goLeft * (Math.random() * NumberOfImages % 2) * ImageWidth );
-
-		this.spinning = true;
-		this.el.delay(!this.top * TopOffset).animate(
-			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			InitialSpinDuration - (this.top * TopOffset),
-			"swing",
-			this.midSpin.bind(that)
-		);
-	},
-
-	midSpin: function() {
-		var bgX, that = this;
-		
-		// Update positions and attach event handlers
-		this.updatePositions();
-		this.el.on("mousedown", function(event) {
-			event.preventDefault();
-			event.stopPropagation();
-			that.el.stop(); // stop midspin animation
-			that.endSpin();
-		});
-
-		bgX = -(this.goLeft * NumberOfImages * ImageWidth * Rotations - this._bg[0]);
-
-		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			MidSpinDuration - (12 * this.top * TopOffset),
-			"linear",
-			that.endSpin.bind(that)
-		);
-	},
-
-	endSpin: function() {
-		var bgX, that = this;
-		
-		// Update position and remove event handlers
-		this.updatePositions();
-		this.spinning = false;
-		this.el.off("mousedown");
-
-		// Play sound
-		ion.sound.play("tap");
-
-		// Change spin direction for next go
-		this.goLeft = -this.goLeft;
-		
-		// Calculate end spin position
-		bgX = this._bg[0];
-		bgX -= this.remainingRotation();
-		bgX -= 2 * (-this.goLeft * ImageWidth); // add two more rotations
-
-		if (DebugMode === 1) {
-			if (debugIndex < 2) {
-				bgX = 0;
-				debugIndex++;
-			}
-		} else if (DebugMode === 2 || DebugMode === 4) {
-			bgX = Math.floor((debugIndex-1)/2) * ImageWidth;
-			debugIndex--;
-		} else if (DebugMode === 3) {
-			bgX = (debugIndex % 2 === 0) ? ImageWidth : bgX;
-			debugIndex++;
-		}
-
-		// Advance reel to end spin position
-		this.el.animate(
-			{ backgroundPosition: bgX + 'px ' + that._bg[1] + 'px' },
-			EndSpinDuration,
-			"easeOutQuint",
-			function() {
-				that.updatePositions();
-				that.callback(that._pos, that.top );
-			}
-		);
-	},
-
-	finalPos: function() {
- 		return Math.floor( ( Math.random() * NumberOfImages ) ) + 1;
+  reset: function() {
+    this.iterations = 1;
+    this.imgWidth = this.imgWidth || 13 * this.img.get(0).offsetWidth / 14.0;
+    this.cellWidth = this.cellWidth || this.imgWidth / (1.0 * NumberOfImages);
+    this.setPosition(this.getPosition());
   },
 
-  remainingRotation: function() {
-  	return this._bg[0] % ImageWidth;
+  stop: function(event) {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    ion.sound.play("tap");
+    this.stopCallback();
+    this.el.off("mousedown");
+    this.spinning = false;
+  },
+
+  advanceTo: function(index, callback) {
+    this.reset();
+    this.spinning = true;
+
+    var endValue = this.cellWidth * (index - 1);
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: AdvanceDuration * 60,
+      easingFunction: NO_EASING,
+      callback: callback
+    }));
+  },
+
+	getPosition: function() {
+		return this.position % this.imgWidth;
+	},
+
+  setPosition: function(left) {
+    this.position = left;
+    this.img.get(0).style.left = this.getPosition() + 'px';
+  },
+
+  setIndex: function(index) {
+    var left = this.cellWidth * (index - 1);
+    this.setPosition(left);
+  },
+
+  initialSpin: function() {
+    this.reset();
+    this.spinning = true;
+
+    var endValue = this.cellWidth * (1 + 2 * Math.random());
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: InitialSpinDuration * 60 + this.offset,
+      easingFunction: EASE_IN,
+      callback: this.midSpin.bind(this)
+    }));
+  },
+
+  midSpin: function() {
+    this.spinning = true;
+
+    var endValue = 3 * this.imgWidth + Math.ceil(Math.random() * NumberOfImages) * this.cellWidth;
+    this.el.on("mousedown", this.stop.bind(this));
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: MidSpinDuration * 60,
+      easingFunction: NO_EASING,
+      callback: this.endSpin.bind(this)
+    }));
+  },
+
+  endSpin: function() {
+    this.stop();
+    this.spinning = true;
+
+    var clickedCell = -Math.round(this.position / this.cellWidth);
+    var endValue = (clickedCell + 2) * this.cellWidth;
+    var endIndex = (clickedCell + 2) % NumberOfImages;
+
+    requestAnimationFrame(this._spin.bind(this, {
+      startValue: this.position,
+      endValue: -endValue,
+      totalIterations: EndSpinDuration * 60,
+      easingFunction: EASE_OUT,
+      callback: function() {
+        this.callback(endIndex + 1, this.top);
+      }.bind(this)
+    }));
+  },
+
+  _spin: function(opts) {
+    var newPosition = opts.easingFunction(this.iterations, opts.startValue, (opts.endValue - opts.startValue), opts.totalIterations);
+
+    if (this.spinning && newPosition > opts.endValue) {
+      this.iterations++;
+      this.setPosition(newPosition);
+      requestAnimationFrame(this._spin.bind(this, opts));
+    } else {
+      this.iterations = 1;
+      this.spinning = false;
+      opts.callback();
+    }
   }
 };
 
-function Slot(els, boneEl, controlEl, nameEl ) {
-	this.reels = [ new Reel( $(els[0]), true, this.callback.bind(this) ), new Reel( $(els[1]), false, this.callback.bind(this) ) ];
-	this.positions = [0,0];
+function Slot(els, boneEl, controlEl, nameEl) {
+	this.reels = [ new Reel($(els[0]), true, this.callback.bind(this), this.toggleControl.bind(this, false)),
+                 new Reel($(els[1]), false, this.callback.bind(this), this.toggleControl.bind(this, false)) ];
+	this.positions = [1, 1];
 	this.bones = [];
 	this.nextBoneId = 0;
 	this.boneTally = 0;
 	this.boneTallyArea = boneEl;
 	this.control = controlEl;
-	this.nameArea = new NameArea( nameEl );
+	this.nameArea = new NameArea(nameEl);
 	this.activeVideo = null;
-	this.goLeft = 1;
 	this.trophies = [];
 	this.spinningReels = 0;
 	this.bowl = $('.bowl');
@@ -208,64 +223,40 @@ function Slot(els, boneEl, controlEl, nameEl ) {
 }
 
 Slot.prototype = {
-
 	setUpGame: function() {
-		var that = this;
-		// add start bones
 		this.addBones(StartBones);
-		// set up click & "s" key controller
-		this.control.click( function() {
-		  that.start();
-		});
-
+		this.enableControls();
 		this.clearDogName();
 
-		if (DebugMode === 4 || DebugMode === 5) {
-			for (var i=1; i<=PurebredCount; i++){
-				if (i != 2) {
-					this.positions = [i,i];
-					this.win();
-				}
-			}
-		}
-
 		// event handlers for end-game
-		$(document).on('click', '#start_over', function(event){
+		$(document).on('click', '#start_over', function(event) {
 	  	event.stopPropagation();
 	  	console.log('starting over');
-	  	that.restart();
-	  	that.playSound('game start');
+	  	this.restart();
+	  	this.playSound('game start');
 	  	$('#overlay, .modal').remove();
-	  });
-	  $(document).on('click', '#get_more_bones', function(event){ 
+	  }.bind(this));
+	  $(document).on('click', '#get_more_bones', function(event) { 
 	  	event.stopPropagation();
 	  	console.log('getting more bones');
-	  	that.addBones(StartBones);
-	  	that.enableControls();
-	  	that.playSound('register');
+	  	this.addBones(StartBones);
+	  	this.enableControls();
+	  	this.playSound('register');
 	  	$('#overlay, .modal').remove();
-	  });
+	  }.bind(this));
 	},
 
 	start: function() {
-		var that = this, bgX, bgY, rotation;
 		this.stopVideo();
 		this.playSound('coin');
 		this.removeBone();
 		this.disableControls();
 		this.clearDogName();
-		this.positions = [0,0];
-
-		// spin reels
-		this.spinningReels = 2;
-		this.reels[0].initialSpin();
+		this.spinningReels = 1;
 		this.reels[1].initialSpin();
-			// bgX = rotation - ( ImageWidth * (finalPos[index] - 1) );
-			// bgY = -300*index;
 	},
 
 	callback: function(finalPos, top) {
-		var that = this;
 		var index = top ? 0 : 1;
 		this.positions[index] = finalPos;
 		this.spinningReels--;
@@ -275,15 +266,14 @@ Slot.prototype = {
 
 			if (this.winner()) {
 				this.win();
-				this.enableControls();
-			} else if ((!this.winner()) && this.boneTally === 0) {
-				setTimeout(function() { that.gameOver(); }, 600);
+			} else if (this.boneTally === 0) {
+				setTimeout(this.gameOver.bind(this), 600);
 			} else {
 				this.enableControls();
 			}
 
-			if (this.trophies.length == PurebredCount) {
-				setTimeout(function() { that.endGameWithWin(); }, 4500);
+			if (this.trophies.length === PurebredCount) {
+				setTimeout(this.endGameWithWin.bind(this), 4500);
 			}
 		}
  	},
@@ -297,31 +287,31 @@ Slot.prototype = {
  	},
 
  	win: function() {
- 		if ( this.trueMatch() ) {
-	 		var match = this.positions[0];
-	 		if (this.trophies.indexOf(match) === -1) {
-	 			this.trophies.push(match);
-	 			$('.trophy[data-id="'+match+'"]').css({
-			     '-webkit-transform' : 'rotateY(-1440deg)',
-			     '-moz-transform' : 'rotateY(-1440deg)',  
-			      '-ms-transform' : 'rotateY(-1440deg)',  
-			       '-o-transform' : 'rotateY(-1440deg)',  
-			          'transform' : 'rotateY(-1440deg)'
-	 			}).addClass('earned');
-	 		}
+ 		if (this.trueMatch()) {
+	 		var match = this.positions[1];
+      this.playVideo(match);
+      if (this.trophies.indexOf(match) === -1) {
+        this.trophies.push(match);
+        $('.trophy[data-id="'+match+'"]').css({
+           '-webkit-transform' : 'rotateY(-1440deg)',
+           '-moz-transform' : 'rotateY(-1440deg)',  
+            '-ms-transform' : 'rotateY(-1440deg)',  
+             '-o-transform' : 'rotateY(-1440deg)',  
+                'transform' : 'rotateY(-1440deg)'
+        }).addClass('earned');
 
-	 		if ( (DebugMode != 4 && DebugMode != 5) || this.positions[0] === 2) {
-	 			this.playVideo(this.positions[0]);
-	 		}
-	 		if (DebugMode === 5) {
-	 			for(var i=0; i < this.boneTally-1; i++) {
-	 				this.removeBone();
-	 			}
-	 		}
-	 	}
- 		
+        this.positions[0]++;
+        setTimeout(this.reels[0].advanceTo.bind(this.reels[0], this.positions[0], function() {
+          this.enableControls();
+          this.clearDogName();
+          this.setDogName();
+        }.bind(this)), 4500);
+      }
+    } else {
+      setTimeout(this.enableControls.bind(this), 750);
+    }
+    
  		this.addBones(this.payout());
-
 	 	this.playSound('success');
  	},
 
@@ -367,7 +357,7 @@ Slot.prototype = {
   },
 
   setDogName: function() {
-  	this.nameArea.display( this.positions );
+  	this.nameArea.display(this.positions);
   },
 
   clearDogName: function() {
@@ -375,77 +365,106 @@ Slot.prototype = {
   },
 
   restart: function() {
-  	// remove all bones
-  	console.log('restarting');
-
-  	for ( var i=0; i<this.bones.length; i++ ) {
+  	for (var i=0; i<this.bones.length; i++) {
   		this.removeBone();
   	}
 
-  	this.addBones(StartBones);
-  	this.trophies = [];
-  	$('.trophy').removeClass('earned').css({
-			     '-webkit-transform' : 'rotateY(0deg)',
-			     '-moz-transform' : 'rotateY(0deg)',  
-			      '-ms-transform' : 'rotateY(0deg)',  
-			       '-o-transform' : 'rotateY(0deg)',  
-			          'transform' : 'rotateY(0deg)'
-	 			});
-  	this.enableControls();
+    this.clearDogName();
+    this.positions = [1, 1];
+    this.reels[0].setIndex(this.positions[0]);
+    this.reels[1].setIndex(this.positions[1]);
+    this.setDogName();
+    this.addBones(StartBones);
+    this.trophies = [];
+    $('.trophy').removeClass('earned').css({
+           '-webkit-transform' : 'rotateY(0deg)',
+           '-moz-transform' : 'rotateY(0deg)',  
+            '-ms-transform' : 'rotateY(0deg)',  
+             '-o-transform' : 'rotateY(0deg)',  
+                'transform' : 'rotateY(0deg)'
+        });
+    this.enableControls();
   },
 
   gameOver: function() {
   	var trophies = [];
   	this.playSound("FAIL");
-  	for (var i=1; i<PurebredCount; i++) {
-  		if (this.trophies.indexOf(i+1) > -1) {
+    for (var i=0; i<PurebredCount; i++) {
+      if (this.trophies.indexOf(i+1) > -1) {
   			trophies[i] = 'earned';
   		} else {
   			trophies[i] = '';
   		}
   	}
-	  var html = modal_template({trophies: trophies, toys: this.trophies.length, plural: this.trophies.length === 1 ? "Y" : "IES" });
-	  $(html).css("opacity","0").appendTo('body');
+	  var html = modal_template({
+      trophies: trophies,
+      toys: this.trophies.length,
+      plural: this.trophies.length === 1 ? "Y" : "IES"
+    });
+
+	  $(html).css("opacity", "0").appendTo('body');
 	  $('#overlay').animate(
-	  	{opacity: ".8"},
+	  	{
+        opacity: ".8"
+      },
 	  	1000
-	  );
+	 );
 	  $('.modal').animate(
-	  	{opacity: "1"},
+	  	{
+        opacity: "1"
+      },
 	  	1000
-	  );
+	 );
+  },
+
+  toggleControl: function(enabled) {
+    this.control.prop("disabled", !enabled)
   },
 
   disableControls: function() {
-  	this.control.prop("disabled", true);
+    this.toggleControl(false);
+    
+    setTimeout(function() {
+    	this.control.text('Stop');
+      this.toggleControl(true);
+      this.control.off('click');
+      this.control.on('click', function() {
+        this.control.off('click');
+        this.toggleControl(false);
+        this.reels[1].stop();
+      }.bind(this));
+    }.bind(this), (InitialSpinDuration + TopOffset / 60) * 1000);
   },
 
   enableControls: function() {
-  	this.control.prop("disabled", false);
+    this.toggleControl(true);
+    this.control.text('Spin');
+    this.control.off('click');
+    this.control.on('click', this.start.bind(this));
   },
 
   addBone: function(delay) {
   	var that = this;
-  	var bone = new Bone( this.nextBoneId );
+  	var bone = new Bone(this.nextBoneId);
 
   	var updateBoneTally = function() {
-  		that.boneTallyArea.text( that.boneTally );
+  		that.boneTallyArea.text(that.boneTally);
   		that.setBowlImage();
   	};
 
   	var addOne = function(delay) {
-			that.bones.unshift( bone );
+			that.bones.unshift(bone);
 	 		that.boneTally++;
 	  	that.nextBoneId++;
 	  	bone.add();
   	};
 
-  	setTimeout( addOne, 200*delay);
-  	setTimeout( updateBoneTally, 750 + 200*delay);
+  	setTimeout(addOne, 200*delay);
+  	setTimeout(updateBoneTally, 750 + 200*delay);
 	},
 
   addBones: function(bones) {
-  	for ( var j=0; j<bones; j++ ) {
+  	for (var j=0; j<bones; j++) {
   		this.addBone(j);
   	}
   },
@@ -475,13 +494,13 @@ Slot.prototype = {
   	var bone = this.bones.pop();
   	bone.remove();
   	this.boneTally--;
-  	this.boneTallyArea.text( this.boneTally );
+  	this.boneTallyArea.text(this.boneTally);
   	this.setBowlImage();
   },
 
   endGameWithWin: function() {
   	var html = winning_template({toys: this.trophies.length, plural: this.trophies.length === 1 ? "" : "s" });
-  	$(html).css("opacity","0").appendTo('body');
+  	$(html).css("opacity", "0").appendTo('body');
   	$('#overlay').animate(
   		{opacity: ".8"},
   		1000
@@ -495,7 +514,6 @@ Slot.prototype = {
 
 $(document).ready(function() {
 	// precompile templates
-	DebugMode = parseInt($('.debug_mode').val());
 
 	var bone_source   = $("#bone-template").html();
 	var modal_source   = $("#modal-template").html();
@@ -506,5 +524,5 @@ $(document).ready(function() {
 	modal_template = Handlebars.compile(modal_source);
 	winning_template = Handlebars.compile(winning_source);
 
-	var slot = new Slot( $('.slot'), $('.bones'), $('#control'), $('.dogname') );
+	var slot = new Slot($('.slot'), $('.bones'), $('#control'), $('.dogname'));
 });
